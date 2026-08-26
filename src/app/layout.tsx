@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Answer Mapper — VedaAI",
+  title: "AI Evaluator — VedaAI",
   description:
     "Upload a question paper and a student's answer sheet to map, review, and grade answers side by side.",
 };
