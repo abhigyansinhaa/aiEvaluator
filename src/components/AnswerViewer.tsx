@@ -2,16 +2,17 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useAssessment } from '@/context/AssessmentContext';
-import { ChevronLeft, ChevronRight, Eye, MapPin, AlertCircle, FileCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
 
 export const AnswerViewer: React.FC = () => {
   const { data, activeQuestionId, activeMapping } = useAssessment();
   const [currentPage, setCurrentPage] = useState(0);
+  const [zoomLevel, setZoomLevel] = useState(100);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const images = data?.answerPageImages || [];
 
-  // When active mapping changes, automatically switch to the page containing the answer region!
+  // Automatically switch page when active mapping is on a different page
   useEffect(() => {
     if (activeMapping?.regions?.[0]) {
       const targetPage = activeMapping.regions[0].pageIndex;
@@ -21,99 +22,113 @@ export const AnswerViewer: React.FC = () => {
     }
   }, [activeQuestionId, activeMapping, images.length]);
 
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(175, prev + 25));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(75, prev - 25));
+  };
+
   if (!data || images.length === 0) {
     return (
-      <div className="viewer-panel" style={{ alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: 'var(--text-muted)' }}>No answer sheet loaded.</p>
+      <div className="figma-viewer-panel empty">
+        <p className="no-sheet-text">No answer sheet loaded.</p>
       </div>
     );
   }
 
   const region = activeMapping?.regions?.[0];
   const isAnswered = activeMapping?.status === 'answered';
+  const hasRegionOnCurrentPage = isAnswered && region && region.pageIndex === currentPage;
+
+  // Format question badge tag e.g. "Q2", "Q1", "Q11 a"
+  const questionBadgeTag = activeMapping?.questionNumber ? `Q${activeMapping.questionNumber.replace(/\s+/g, '')}` : 'Q';
 
   return (
-    <div className="viewer-panel">
-      {/* Viewer Toolbar */}
-      <div className="viewer-toolbar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <FileCheck size={18} color="var(--primary)" />
-          <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-main)' }}>
-            Student Handwritten Answer Sheet
-          </span>
-        </div>
+    <div className="figma-viewer-panel">
+      {/* Dark Toolbar Header matching Figma Page 7 & 9 */}
+      <div className="figma-viewer-toolbar">
+        {/* Left Title */}
+        <div className="toolbar-sheet-title">Answer Sheet</div>
 
-        <div className="page-controls">
+        {/* Center: Zoom Controls */}
+        <div className="toolbar-zoom-controls">
           <button
-            className="btn-icon"
-            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
-            disabled={currentPage === 0}
+            type="button"
+            className="zoom-btn"
+            onClick={handleZoomOut}
+            disabled={zoomLevel <= 75}
+            title="Zoom Out"
+            aria-label="Zoom Out"
           >
-            <ChevronLeft size={18} />
+            <Minus size={14} />
           </button>
 
-          <span>
+          <span className="zoom-percentage-text">{zoomLevel}%</span>
+
+          <button
+            type="button"
+            className="zoom-btn"
+            onClick={handleZoomIn}
+            disabled={zoomLevel >= 175}
+            title="Zoom In"
+            aria-label="Zoom In"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+
+        {/* Right: Page Navigation */}
+        <div className="toolbar-page-navigation">
+          <button
+            type="button"
+            className="page-nav-arrow-btn"
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            title="Previous Page"
+            aria-label="Previous Page"
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          <span className="page-counter-text">
             Page {currentPage + 1} of {images.length}
           </span>
 
           <button
-            className="btn-icon"
+            type="button"
+            className="page-nav-arrow-btn"
             onClick={() => setCurrentPage(p => Math.min(images.length - 1, p + 1))}
             disabled={currentPage === images.length - 1}
+            title="Next Page"
+            aria-label="Next Page"
           >
-            <ChevronRight size={18} />
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
-      {/* Answer Region Status Bar */}
-      <div
-        style={{
-          padding: '0.6rem 1.5rem',
-          background: isAnswered ? 'var(--primary-light)' : 'var(--danger-bg)',
-          borderBottom: '1px solid var(--border-color)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          fontSize: '0.85rem',
-        }}
-      >
-        {isAnswered && region ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary)', fontWeight: 600 }}>
-            <MapPin size={16} />
-            <span>
-              Mapped Answer Region for <strong>Q{activeMapping?.questionNumber}</strong> (Highlighted below)
-            </span>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)', fontWeight: 600 }}>
-            <AlertCircle size={16} />
-            <span>
-              Q{activeMapping?.questionNumber || ''} is <strong>Unanswered</strong> — No region highlighted on answer sheet.
-            </span>
-          </div>
-        )}
-
-        {isAnswered && activeMapping?.answerText && (
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '500px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            "{activeMapping.answerText}"
-          </span>
-        )}
-      </div>
-
-      {/* Image & Bounding Box Viewer Container */}
-      <div className="viewer-canvas-container" ref={containerRef}>
-        <div className="sheet-page-wrapper">
+      {/* Sheet Canvas Container */}
+      <div className="figma-sheet-canvas-area" ref={containerRef}>
+        <div
+          className="figma-paper-wrapper"
+          style={{
+            transform: `scale(${zoomLevel / 100})`,
+            transformOrigin: 'top center',
+          }}
+        >
+          {/* Answer Sheet Image */}
           <img
             src={images[currentPage]}
             alt={`Answer Sheet Page ${currentPage + 1}`}
-            className="sheet-image"
+            className="figma-sheet-img"
           />
 
-          {/* Bounding Box Highlight Overlay */}
-          {isAnswered && region && region.pageIndex === currentPage && (
+          {/* Figma Green Bounding Box & "Q2" Green Pill Tag */}
+          {hasRegionOnCurrentPage && (
             <div
-              className={`highlight-box ${activeMapping?.isCorrect ? 'correct' : ''}`}
+              className="figma-green-highlight-box"
               style={{
                 top: `${region.box.ymin / 10}%`,
                 left: `${region.box.xmin / 10}%`,
@@ -121,9 +136,9 @@ export const AnswerViewer: React.FC = () => {
                 width: `${(region.box.xmax - region.box.xmin) / 10}%`,
               }}
             >
-              <div className="highlight-label">
-                <Eye size={12} />
-                <span>Answer Q{activeMapping?.questionNumber}</span>
+              {/* Green Tab Badge on top left matching Figma Page 7 & 9 */}
+              <div className="figma-green-tag-badge">
+                {questionBadgeTag}
               </div>
             </div>
           )}

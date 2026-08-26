@@ -1,52 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
 
 :root {
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Inter', -apple-system, sans-serif;
   
-  /* Primary Color Palette */
-  --primary: #ff5733;
-  --primary-hover: #e04826;
-  --primary-light: #fff1ee;
-  --primary-border: #ffd1c7;
+  /* Coral / Peach Accent (Figma Brand) */
+  --coral-primary: #FF5722;
+  --coral-hover: #E64A19;
+  --coral-light: #FFF1EE;
+  --coral-border: #FFD1C7;
+  --coral-glow: rgba(255, 87, 34, 0.25);
+  
+  /* Neutrals & Surfaces */
+  --bg-app: #F8FAFC;
+  --bg-sidebar: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #F1F5F9;
+  
+  --text-main: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  
+  --border-color: #E2E8F0;
+  --border-subtle: #EDF2F7;
+  
+  /* Feedback / Marks Colors */
+  --score-green-text: #15803D;
+  --score-green-bg: #DCFCE7;
+  --score-amber-text: #B45309;
+  --score-amber-bg: #FEF3C7;
+  --score-red-text: #DC2626;
+  --score-red-bg: #FEE2E2;
 
-  /* Neutral Spectrum */
-  --bg-main: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-subtle: #f1f5f9;
-  
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
-  
-  --border-color: #e2e8f0;
-  --border-focus: #cbd5e1;
+  /* Figma Green Bounding Box */
+  --highlight-green: #22C55E;
+  --highlight-green-bg: rgba(34, 197, 94, 0.08);
 
-  /* Status Indicators */
-  --success: #10b981;
-  --success-bg: #ecfdf5;
-  --success-border: #a7f3d0;
-  
-  --warning: #f59e0b;
-  --warning-bg: #fffbeb;
-  --warning-border: #fde68a;
-  
-  --danger: #ef4444;
-  --danger-bg: #fef2f2;
-  --danger-border: #fecaca;
-  
-  --info: #3b82f6;
-  --info-bg: #eff6ff;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  /* Border Radius */
+  /* Radius & Shadows */
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 18px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-pill: 9999px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
 }
 
 * {
@@ -57,11 +57,12 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--bg-main);
+  background-color: var(--bg-app);
   color: var(--text-main);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {
@@ -74,606 +75,1231 @@ button {
   border: none;
   font-family: inherit;
   background: none;
+  color: inherit;
 }
 
-/* Layout Utilities */
-.app-container {
+/* =========================================================================
+   APP SHELL LAYOUT (Sidebar + Main Content)
+   ========================================================================= */
+.figma-app-layout {
+  display: flex;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  width: 100vw;
+  background-color: #F8FAFC;
 }
 
-.main-content {
-  flex: 1;
+/* =========================================================================
+   SIDEBAR COMPONENT
+   ========================================================================= */
+.app-sidebar {
+  width: 250px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 1.25rem 1rem;
+  user-select: none;
 }
 
-/* Header Styles */
-.header {
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
-  padding: 1rem 2rem;
+.app-sidebar.collapsed {
+  width: 76px;
+  padding: 1.25rem 0.6rem;
+}
+
+/* Sidebar Top / Brand */
+.sidebar-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.25rem;
 }
 
-.brand {
+.sidebar-brand {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.brand-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--primary), #ff8c42);
-  border-radius: var(--radius-md);
+.brand-logo-badge {
+  width: 38px;
+  height: 38px;
+  background: #111827;
+  color: #FFFFFF;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 1.2rem;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.3rem;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
-.brand-title {
-  font-weight: 700;
+.brand-logo-text {
+  font-family: var(--font-heading);
+  font-weight: 800;
   font-size: 1.25rem;
-  color: var(--text-main);
+  color: #111827;
   letter-spacing: -0.02em;
 }
 
-.brand-tag {
-  background: var(--primary-light);
-  color: var(--primary);
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-pill);
+.sidebar-collapse-btn {
+  color: var(--text-light);
+  padding: 0.35rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
 }
 
-/* Upload Screen */
-.upload-hero {
-  max-width: 960px;
-  margin: 3rem auto;
-  padding: 0 1.5rem;
+.sidebar-collapse-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.app-sidebar.collapsed .sidebar-collapse-btn {
+  margin: 0 auto;
+}
+
+/* AI Teacher's Toolkit Pill */
+.sidebar-toolkit-container {
+  margin-bottom: 1.5rem;
+}
+
+.ai-toolkit-pill {
   width: 100%;
-  text-align: center;
+  background: #1F242D;
+  color: #FFFFFF;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.avatar-illustration {
-  width: 110px;
-  height: 110px;
-  margin: 0 auto 1.5rem;
-  position: relative;
+.ai-toolkit-pill:hover {
+  background: #2D333F;
+  transform: translateY(-1px);
+}
+
+.ai-toolkit-pill.collapsed {
+  padding: 0.65rem;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
+}
+
+.sparkle-glow-icon {
+  color: #FFB347;
+  flex-shrink: 0;
+}
+
+/* Sidebar Nav Links */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.nav-item.active {
+  background: #F1F3F5;
+  color: #0F172A;
+  font-weight: 700;
+}
+
+.app-sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 0.7rem 0;
+}
+
+/* Sidebar Bottom (Settings & School Badge) */
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.settings-item {
+  margin-bottom: 0.25rem;
+}
+
+.school-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #F8FAFC;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.75rem;
+}
+
+.school-card.collapsed {
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.school-emblem {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.avatar-circle {
-  width: 90px;
-  height: 90px;
-  background: linear-gradient(135deg, #ffd3c6 0%, #ffeedd 100%);
+.school-info {
+  overflow: hidden;
+}
+
+.school-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.school-location {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-expand-arrow-btn {
+  margin: 0.25rem auto 0;
+  color: var(--text-light);
+  padding: 0.3rem;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.sidebar-expand-arrow-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+/* =========================================================================
+   MAIN CONTENT COLUMN & HEADER
+   ========================================================================= */
+.figma-main-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Top Navbar */
+.top-navbar {
+  height: 64px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.nav-back-btn {
+  color: var(--text-main);
+  padding: 0.4rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.nav-back-btn:hover {
+  background: var(--bg-subtle);
+}
+
+.navbar-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.nav-action-icon-btn {
+  color: var(--text-secondary);
+  padding: 0.4rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  box-shadow: 0 8px 20px rgba(255, 87, 51, 0.15);
-  border: 3px solid white;
+  position: relative;
+  transition: all 0.15s;
 }
 
-.upload-title {
-  font-size: 2rem;
+.nav-action-icon-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-main);
+}
+
+.notification-btn {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  background: #EF4444;
+  border-radius: 50%;
+  border: 1.5px solid #FFFFFF;
+}
+
+.sparkle-tint {
+  color: #F59E0B;
+}
+
+.user-profile-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-pill);
+  transition: background 0.15s;
+}
+
+.user-profile-menu:hover {
+  background: var(--bg-subtle);
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.user-profile-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.user-chevron {
+  color: var(--text-light);
+}
+
+/* =========================================================================
+   UPLOAD SCREEN (Figma Pages 1, 2, 3, 4)
+   ========================================================================= */
+.figma-page-body.upload-mode {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.upload-screen-container {
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.upload-header-section {
+  margin-bottom: 2rem;
+}
+
+.upload-main-title {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.03em;
   margin-bottom: 0.5rem;
 }
 
-.upload-subtitle {
-  color: var(--text-muted);
-  font-size: 1.05rem;
-  margin-bottom: 2.5rem;
+.title-coral-gradient {
+  color: var(--coral-primary);
+  background: linear-gradient(135deg, #FF6B4A 0%, #FF4500 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.upload-cards-grid {
+.upload-subtitle-text {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+}
+
+/* Concentric Glowing Rings for Teacher Illustration */
+.teacher-illustration-wrapper {
+  margin: 0 auto 2.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.outer-glow-ring {
+  width: 154px;
+  height: 154px;
+  border-radius: 50%;
+  background: rgba(255, 107, 74, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.middle-glow-ring {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: rgba(255, 107, 74, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner-glow-ring {
+  width: 98px;
+  height: 98px;
+  border-radius: 50%;
+  background: #FFE8E1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(255, 87, 34, 0.2);
+}
+
+.teacher-avatar-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Floating Accent Badges */
+.floating-badge {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+}
+
+.badge-top-right {
+  top: 4px;
+  right: 4px;
+  background: #FF6B4A;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FFFFFF;
+}
+
+.badge-left {
+  left: -8px;
+  top: 38px;
+}
+
+.badge-bottom-left {
+  bottom: 4px;
+  left: 6px;
+  background: #FF6B4A;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.badge-right {
+  right: -8px;
+  bottom: 30px;
+  color: #FF6B4A;
+}
+
+/* Upload Cards Grid */
+.upload-cards-pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.25rem;
 }
 
 @media (max-width: 768px) {
-  .upload-cards-grid {
+  .upload-cards-pair {
     grid-template-columns: 1fr;
   }
 }
 
-.upload-card {
-  background: var(--bg-card);
-  border: 2px dashed var(--border-color);
-  border-radius: var(--radius-lg);
+.figma-upload-card {
+  background: #FFFFFF;
+  border: 1.5px dashed #CBD5E1;
+  border-radius: 18px;
   padding: 2.5rem 1.5rem;
-  transition: all 0.25s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 180px;
   cursor: pointer;
   position: relative;
 }
 
-.upload-card:hover, .upload-card.drag-over {
-  border-color: var(--primary);
-  background-color: var(--primary-light);
+.figma-upload-card:hover, .figma-upload-card.dragging {
+  border-color: var(--coral-primary);
+  background: var(--coral-light);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 87, 34, 0.1);
 }
 
-.upload-card.has-file {
+.figma-upload-card.file-selected {
   border-style: solid;
-  border-color: var(--primary-border);
-  background-color: var(--primary-light);
+  border-color: var(--border-color);
+  background: #FFFFFF;
+  padding: 1.75rem 1.5rem;
 }
 
-.upload-icon-container {
-  width: 56px;
-  height: 56px;
-  background: var(--bg-subtle);
-  border-radius: 50%;
+.empty-dropzone-content {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-  color: var(--primary);
-  transition: transform 0.2s ease;
 }
 
-.upload-card:hover .upload-icon-container {
-  transform: scale(1.1);
-  background: white;
+.figma-upload-icon-box {
+  margin-bottom: 1rem;
 }
 
-.upload-card-title {
+.upload-card-heading {
+  font-family: var(--font-heading);
   font-size: 1.15rem;
   font-weight: 700;
-  margin-bottom: 0.4rem;
   color: var(--text-main);
+  margin-bottom: 0.35rem;
 }
 
-.upload-card-title span {
-  color: var(--primary);
+.coral-text {
+  color: var(--coral-primary);
 }
 
-.upload-card-desc {
+.upload-card-sublabel {
   font-size: 0.85rem;
   color: var(--text-muted);
 }
 
-.file-preview {
+/* Uploaded File Row matching Figma Page 3 & 4 */
+.uploaded-file-row {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  background: white;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--primary-border);
-  margin-top: 1rem;
-  width: 100%;
-  max-width: 320px;
+  gap: 0.85rem;
 }
 
-.file-name {
-  font-size: 0.9rem;
-  font-weight: 600;
+.pdf-badge-tag {
+  background: #EF4444;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.file-meta-info {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+}
+
+.file-main-name {
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--text-main);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
 }
 
-.btn-remove {
-  color: var(--text-light);
-  padding: 0.25rem;
+.file-sub-info {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+.remove-file-round-btn {
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  transition: color 0.2s;
+  background: #334155;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
 }
 
-.btn-remove:hover {
-  color: var(--danger);
-  background: var(--danger-bg);
+.remove-file-round-btn:hover {
+  background: #EF4444;
 }
 
-.btn-primary {
-  background: var(--primary);
-  color: white;
-  font-weight: 700;
-  font-size: 1.1rem;
-  padding: 0.9rem 2.5rem;
+/* Start Mapping Button matching Figma */
+.cta-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.start-mapping-btn {
+  padding: 0.85rem 2.5rem;
   border-radius: var(--radius-pill);
-  box-shadow: 0 4px 14px rgba(255, 87, 51, 0.35);
-  transition: all 0.2s ease;
+  font-size: 1.05rem;
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
+  transition: all 0.2s ease;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 87, 51, 0.45);
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
+.start-mapping-btn.disabled {
+  background: #D1D5DB;
+  color: #9CA3AF;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
-.demo-trigger {
-  margin-top: 1.5rem;
+.start-mapping-btn.active {
+  background: #18181B;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+.start-mapping-btn.active:hover {
+  background: #27272A;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.start-mapping-helper-text {
+  font-size: 0.85rem;
   color: var(--text-muted);
-  font-size: 0.9rem;
 }
 
-.demo-link {
-  color: var(--primary);
+/* Demo Launcher Bar */
+.demo-launcher-bar {
+  margin-top: 1rem;
+}
+
+.demo-pill-btn {
+  background: #FFFFFF;
+  border: 1px solid var(--coral-border);
+  color: var(--coral-primary);
+  font-size: 0.85rem;
   font-weight: 600;
-  text-decoration: underline;
-  cursor: pointer;
-
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
 }
 
-/* Processing State Modal / Overlay */
-.processing-overlay {
+.demo-pill-btn:hover {
+  background: var(--coral-light);
+  transform: translateY(-1px);
+  border-color: var(--coral-primary);
+}
+
+.demo-sparkle {
+  color: #F59E0B;
+}
+
+/* =========================================================================
+   EXTRACTING / LOADING OVERLAY (Figma Pages 5 & 6)
+   ========================================================================= */
+.figma-extracting-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 2rem;
 }
 
-.processing-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: 2.5rem;
-  max-width: 480px;
+.extracting-content-box {
+  max-width: 440px;
   width: 100%;
   text-align: center;
-  box-shadow: var(--shadow-lg);
-  animation: modalFadeIn 0.3s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
-@keyframes modalFadeIn {
-  from { opacity: 0; transform: scale(0.95); }
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
 
-.spinner-circle {
-  width: 64px;
-  height: 64px;
-  border: 4px solid var(--primary-light);
-  border-top-color: var(--primary);
-  border-radius: 50%;
-  animation: spin 1s infinite linear;
+.figma-sparkles-container {
+  width: 90px;
+  height: 90px;
   margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.sparkle-star-main {
+  animation: sparklePulse 2.2s infinite ease-in-out;
+  transform-origin: center;
 }
 
-.progress-bar-bg {
-  height: 8px;
-  background: var(--bg-subtle);
+.sparkle-star-secondary {
+  animation: sparkleFloat 1.8s infinite ease-in-out;
+  transform-origin: center;
+}
+
+.sparkle-dot-1 {
+  animation: sparkleDot 1.5s infinite alternate ease-in-out;
+}
+
+.sparkle-dot-2 {
+  animation: sparkleDot 2s infinite alternate ease-in-out;
+}
+
+@keyframes sparklePulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.95; }
+  50% { transform: scale(1.12) rotate(6deg); opacity: 1; }
+}
+
+@keyframes sparkleFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-3px, -3px) scale(1.08); }
+}
+
+@keyframes sparkleDot {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+.extracting-title {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.extracting-subtitle {
+  font-size: 1rem;
+  color: #64748B;
+}
+
+.extracting-progress-track {
+  width: 200px;
+  height: 4px;
+  background: #E2E8F0;
   border-radius: var(--radius-pill);
+  margin: 1.5rem auto 0;
   overflow: hidden;
-  margin: 1.5rem 0 1rem;
 }
 
-.progress-bar-fill {
+.extracting-progress-indicator {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), #ff8c42);
+  background: linear-gradient(90deg, #FF7A59, #FF4D2D);
   transition: width 0.4s ease;
 }
 
-/* Results / Split Screen Layout */
-.results-container {
+/* =========================================================================
+   RESULTS / MAPPING SPLIT VIEW (Figma Pages 7, 8, 9)
+   ========================================================================= */
+.figma-page-body.results-mode {
   flex: 1;
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  height: calc(100vh - 69px);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
   overflow: hidden;
 }
 
-@media (max-width: 992px) {
-  .results-container {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: auto;
+.mobile-segmented-bar {
+  display: none;
+  background: #E2E8F0;
+  padding: 0.35rem;
+  border-radius: var(--radius-pill);
+  margin: 0.75rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .mobile-segmented-bar {
+    display: flex;
   }
 }
 
-/* Left Panel: Questions List */
-.questions-panel {
+.segmented-tab-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748B;
+  transition: all 0.2s;
+}
+
+.segmented-tab-btn.active {
+  background: #18181B;
+  color: #FFFFFF;
+  box-shadow: var(--shadow-sm);
+}
+
+.figma-results-split {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  height: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .figma-results-split {
+    display: block;
+    height: calc(100% - 60px);
+  }
+  
+  .figma-results-split.questions .results-left-col {
+    display: flex;
+    height: 100%;
+  }
+  .figma-results-split.questions .results-right-col {
+    display: none;
+  }
+
+  .figma-results-split.answers .results-left-col {
+    display: none;
+  }
+  .figma-results-split.answers .results-right-col {
+    display: flex;
+    height: 100%;
+  }
+}
+
+.results-left-col {
   border-right: 1px solid var(--border-color);
-  background: var(--bg-card);
+  background: #FFFFFF;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
 }
 
-.panel-header {
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  background: white;
+.results-right-col {
+  background: #F8FAFC;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
 }
 
-.panel-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text-main);
+/* =========================================================================
+   LEFT PANEL: QUESTION LIST (Figma Page 7 & 8)
+   ========================================================================= */
+.figma-questions-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.questions-panel-top-bar {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background: #FFFFFF;
 }
 
-.question-stats {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
+.panel-title-text {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0F172A;
 }
 
-.stat-badge {
-  font-size: 0.75rem;
+.expand-all-text-btn {
+  font-size: 0.85rem;
   font-weight: 600;
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--radius-pill);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
+  color: #64748B;
+  transition: color 0.15s;
 }
 
-.stat-badge.answered {
-  background: var(--success-bg);
-  color: var(--success);
-  border: 1px solid var(--success-border);
+.expand-all-text-btn:hover {
+  color: var(--coral-primary);
 }
 
-.stat-badge.unanswered {
-  background: var(--danger-bg);
-  color: var(--danger);
-  border: 1px solid var(--danger-border);
-}
-
-.questions-list {
+.questions-scroll-area {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem 1.25rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
-.question-item {
+/* Question Card */
+.figma-question-card {
+  background: #FFFFFF;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 1rem;
-  background: white;
-  transition: all 0.2s ease;
+  padding: 1rem 1.15rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
-  position: relative;
 }
 
-.question-item:hover {
-  border-color: var(--primary-border);
+.figma-question-card:hover {
+  border-color: #CBD5E1;
   box-shadow: var(--shadow-sm);
   transform: translateX(2px);
 }
 
-.question-item.active {
-  border-color: var(--primary);
-  background-color: var(--primary-light);
-  box-shadow: 0 0 0 2px var(--primary-border);
+.figma-question-card.active-selected {
+  border-color: var(--coral-border);
+  background-color: #FFFDFD;
+  box-shadow: 0 0 0 1.5px var(--coral-primary);
 }
 
-.question-item.subpart {
-  margin-left: 1.25rem;
-  border-left: 3px solid var(--info);
+.question-card-main-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
 }
 
-.question-header {
+/* Number circle (Coral when active, dark charcoal when inactive) */
+.question-number-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #374151;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.question-number {
+  justify-content: center;
+  font-size: 0.85rem;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--text-main);
-
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.question-body {
-  font-size: 0.875rem;
-  color: var(--text-muted);
+.question-number-circle.active-coral {
+  background: var(--coral-primary);
+  box-shadow: 0 2px 6px rgba(255, 87, 34, 0.35);
+}
+
+.question-text-content {
+  flex: 1;
+  font-size: 0.9rem;
   line-height: 1.45;
-  margin-bottom: 0.5rem;
+  color: #1E293B;
+  font-weight: 500;
 }
 
-.question-footer {
+.question-card-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+/* Score Badges */
+.marks-pill-badge {
   font-size: 0.8rem;
-  padding-top: 0.5rem;
-  border-top: 1px dashed var(--border-color);
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
 }
 
-.marks-tag {
-  font-weight: 600;
-  color: var(--text-main);
+.marks-pill-badge.badge-full {
+  background: var(--score-green-bg);
+  color: var(--score-green-text);
 }
 
-/* Right Panel: Answer Viewer & Highlights */
-.viewer-panel {
-  background: var(--bg-main);
+.marks-pill-badge.badge-partial {
+  background: var(--score-amber-bg);
+  color: var(--score-amber-text);
+}
+
+.marks-pill-badge.badge-zero {
+  background: var(--score-red-bg);
+  color: var(--score-red-text);
+}
+
+.accordion-chevron-btn {
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* AI Feedback Box matching Figma Page 7 */
+.ai-feedback-container {
+  margin-top: 0.85rem;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+}
+
+.ai-feedback-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ai-feedback-text {
+  font-size: 0.85rem;
+  color: #475569;
+  line-height: 1.4;
+}
+
+/* =========================================================================
+   RIGHT PANEL: ANSWER VIEWER (Figma Page 7 & 9)
+   ========================================================================= */
+.figma-viewer-panel {
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  position: relative;
+  background: #F8FAFC;
 }
 
-.viewer-toolbar {
-  background: white;
-  border-bottom: 1px solid var(--border-color);
-  padding: 0.75rem 1.5rem;
+.figma-viewer-panel.empty {
+  align-items: center;
+  justify-content: center;
+}
+
+.no-sheet-text {
+  color: var(--text-muted);
+}
+
+/* Dark Toolbar Header */
+.figma-viewer-toolbar {
+  background: #18181B;
+  color: #FFFFFF;
+  padding: 0.65rem 1.25rem;
+  margin: 0.75rem 1rem 0;
+  border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 20;
 }
 
-.page-controls {
+.toolbar-sheet-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.toolbar-zoom-controls {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-weight: 600;
-  font-size: 0.9rem;
 }
 
-.btn-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
+.zoom-btn {
+  color: #E4E4E7;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: white;
-  color: var(--text-main);
   transition: all 0.15s;
 }
 
-.btn-icon:hover:not(:disabled) {
-  background: var(--bg-subtle);
-  border-color: var(--border-focus);
+.zoom-btn:hover:not(:disabled) {
+  background: #27272A;
+  color: #FFFFFF;
 }
 
-.btn-icon:disabled {
-  opacity: 0.4;
+.zoom-btn:disabled {
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
-.viewer-canvas-container {
+.zoom-percentage-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  min-width: 44px;
+  text-align: center;
+}
+
+.toolbar-page-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-nav-arrow-btn {
+  color: #E4E4E7;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.page-nav-arrow-btn:hover:not(:disabled) {
+  background: #27272A;
+  color: #FFFFFF;
+}
+
+.page-nav-arrow-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.page-counter-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+/* Canvas Area */
+.figma-sheet-canvas-area {
   flex: 1;
   overflow: auto;
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   position: relative;
 }
 
-.sheet-page-wrapper {
+.figma-paper-wrapper {
   position: relative;
-  background: white;
-  box-shadow: var(--shadow-lg);
-  border-radius: 4px;
+  background: #FFFFFF;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
   overflow: hidden;
   max-width: 100%;
+  transition: transform 0.2s ease-out;
 }
 
-.sheet-image {
+.figma-sheet-img {
   display: block;
   width: 100%;
   height: auto;
   user-select: none;
 }
 
-/* Bounding Box Highlight Overlay */
-.highlight-box {
+/* Bounding Box Highlight with Green Tab Badge matching Figma Page 7 & 9 */
+.figma-green-highlight-box {
   position: absolute;
-  border: 3px solid var(--primary);
-  background: rgba(255, 87, 51, 0.22);
-  border-radius: 6px;
+  border: 2.5px solid var(--highlight-green);
+  background: var(--highlight-green-bg);
+  border-radius: 12px;
   pointer-events: none;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 0 15px rgba(255, 87, 51, 0.4);
-  animation: pulseHighlight 2s infinite ease-in-out;
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2), 0 4px 14px rgba(34, 197, 94, 0.25);
+  animation: pulseGreen 2.5s infinite ease-in-out;
 }
 
-.highlight-box.correct {
-  border-color: var(--success);
-  background: rgba(16, 185, 129, 0.22);
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2), 0 4px 10px rgba(34, 197, 94, 0.2); }
+  50% { box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.4), 0 6px 18px rgba(34, 197, 94, 0.4); }
+  100% { box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2), 0 4px 10px rgba(34, 197, 94, 0.2); }
 }
 
-@keyframes pulseHighlight {
-  0% { box-shadow: 0 0 10px rgba(255, 87, 51, 0.3); }
-  50% { box-shadow: 0 0 22px rgba(255, 87, 51, 0.6); }
-  100% { box-shadow: 0 0 10px rgba(255, 87, 51, 0.3); }
-}
-
-.highlight-label {
+.figma-green-tag-badge {
   position: absolute;
-  top: -30px;
-  left: -3px;
-  background: var(--primary);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 4px 4px 0 0;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  box-shadow: var(--shadow-sm);
-}
-
-/* Grading Summary Banner */
-.grading-summary-card {
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.score-display {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.score-circle {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--primary-light);
-  color: var(--primary);
+  top: -24px;
+  left: -2px;
+  background: var(--highlight-green);
+  color: #FFFFFF;
+  font-size: 0.8rem;
   font-weight: 800;
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--primary-border);
+  padding: 0.15rem 0.65rem;
+  border-radius: 6px 6px 0 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.02em;
 }
