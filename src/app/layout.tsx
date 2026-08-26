@@ -1,26 +1,23 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { AssessmentProvider } from '@/context/AssessmentContext';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 export const metadata: Metadata = {
-  title: 'VedaAI - AI Assessment Extraction & Answer Mapping',
-  description: 'Extract question papers, map student handwritten answers side-by-side, highlight answer sheet regions, and generate AI evaluation insights.',
+  title: "Answer Mapper — VedaAI",
+  description:
+    "Upload a question paper and a student's answer sheet to map, review, and grade answers side by side.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <AssessmentProvider>
-          <div className="app-container">
-            {children}
-          </div>
-        </AssessmentProvider>
-      </body>
+    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

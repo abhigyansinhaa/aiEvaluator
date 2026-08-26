@@ -1,150 +1,121 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useAssessment } from '@/context/AssessmentContext';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp } from "lucide-react";
+import type { ExtractedAnswerBlock, ExtractedQuestion, GradeResult, QuestionMapping } from "@/lib/types";
 
-export const QuestionList: React.FC = () => {
-  const { data, activeQuestionId, selectQuestion } = useAssessment();
-  const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({
-    q2: true, // Q2 expanded by default matching Figma Page 7
-  });
+interface QuestionListProps {
+  questions: ExtractedQuestion[];
+  mappings: QuestionMapping[];
+  answersById: Map<string, ExtractedAnswerBlock>;
+  grades: Map<string, GradeResult>;
+  selectedQuestionId: string | null;
+  expandAll: boolean;
+  onSelect: (id: string) => void;
+}
 
-  if (!data) return null;
+function splitNumber(raw: string): { main: string; sub: string | null } {
+  const match = raw.trim().match(/^(\d+)\s*\(?\s*([a-zA-Z]+)\)?\s*$/);
+  if (match) return { main: match[1], sub: `${match[2].toLowerCase()}.` };
+  return { main: raw, sub: null };
+}
 
-  const { questions, mappings } = data;
+function statusLabel(mapping: QuestionMapping | undefined): string {
+  if (!mapping || mapping.answerIds.length === 0) return "Unanswered";
+  if (mapping.answerIds.length > 1) return "Multi-page";
+  return "Answered";
+}
 
-  const allExpanded = questions.every(q => expandedIds[q.id]);
+const marksTone = (awarded: number, max: number) => {
+  if (awarded <= 0) return "bg-red-soft text-red border border-red-border";
+  if (awarded >= max) return "bg-green-soft text-green border border-green-border";
+  return "bg-amber-soft text-amber border border-amber-border";
+};
 
-  const toggleExpand = (id: string, e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    setExpandedIds(prev => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const toggleExpandAll = () => {
-    if (allExpanded) {
-      setExpandedIds({});
-    } else {
-      const all: Record<string, boolean> = {};
-      questions.forEach(q => {
-        all[q.id] = true;
-      });
-      setExpandedIds(all);
-    }
-  };
-
-  const handleCardClick = (questionId: string) => {
-    selectQuestion(questionId);
-    // Also expand when clicked
-    setExpandedIds(prev => ({
-      ...prev,
-      [questionId]: true,
-    }));
-  };
-
-  // Helper to get score badge styling
-  const getMarksBadge = (marksObtained: number | undefined, maxMarks: number | undefined, isAnswered: boolean) => {
-    if (!isAnswered || marksObtained === undefined || maxMarks === undefined) {
-      return {
-        text: `0 / ${maxMarks ?? 2}`,
-        className: 'marks-pill-badge badge-zero',
-      };
-    }
-
-    if (marksObtained === maxMarks) {
-      return {
-        text: `${marksObtained} / ${maxMarks}`,
-        className: 'marks-pill-badge badge-full',
-      };
-    }
-
-    if (marksObtained === 0) {
-      return {
-        text: `0 / ${maxMarks}`,
-        className: 'marks-pill-badge badge-zero',
-      };
-    }
-
-    return {
-      text: `${marksObtained} / ${maxMarks}`,
-      className: 'marks-pill-badge badge-partial',
-    };
-  };
+export function QuestionList({
+  questions,
+  mappings,
+  answersById,
+  grades,
+  selectedQuestionId,
+  expandAll,
+  onSelect,
+}: QuestionListProps) {
+  const mappingById = new Map(mappings.map((m) => [m.questionId, m]));
 
   return (
-    <div className="figma-questions-panel">
-      {/* Panel Header */}
-      <div className="questions-panel-top-bar">
-        <h2 className="panel-title-text">Extracted Questions (from question paper)</h2>
-        <button
-          type="button"
-          className="expand-all-text-btn"
-          onClick={toggleExpandAll}
-        >
-          {allExpanded ? 'Collapse All' : 'Expand All'}
-        </button>
-      </div>
+    <div className="space-y-3">
+      {questions.map((q) => {
+        const mapping = mappingById.get(q.id);
+        const grade = grades.get(q.id);
+        const selected = selectedQuestionId === q.id;
+        const expanded = selected || expandAll;
+        const { main, sub } = splitNumber(q.number);
+        const answerTexts = (mapping?.answerIds ?? [])
+          .map((id) => answersById.get(id)?.text)
+          .filter(Boolean) as string[];
 
-      {/* Scrollable Questions List */}
-      <div className="questions-scroll-area">
-        {questions.map(q => {
-          const mapping = mappings.find(m => m.questionId === q.id);
-          const isAnswered = mapping?.status === 'answered';
-          const isActive = activeQuestionId === q.id;
-          const isExpanded = expandedIds[q.id] || isActive;
-          const marksObtained = mapping?.marksObtained;
-          const maxMarks = q.maxMarks;
-          const badge = getMarksBadge(marksObtained, maxMarks, isAnswered);
-
-          return (
-            <div
-              key={q.id}
-              className={`figma-question-card ${isActive ? 'active-selected' : ''}`}
-              onClick={() => handleCardClick(q.id)}
-            >
-              {/* Question Row Header */}
-              <div className="question-card-main-row">
-                {/* Number Circle (coral when active, dark charcoal when inactive) */}
-                <div className={`question-number-circle ${isActive ? 'active-coral' : ''}`}>
-                  <span>{q.number}</span>
-                </div>
-
-                {/* Question Text */}
-                <div className="question-text-content">
-                  <p>{q.text}</p>
-                </div>
-
-                {/* Score Pill Badge */}
-                <div className="question-card-actions">
-                  <span className={badge.className}>
-                    {badge.text}
-                  </span>
-
-                  <button
-                    type="button"
-                    className="accordion-chevron-btn"
-                    onClick={(e) => toggleExpand(q.id, e)}
-                    aria-label="Toggle details"
-                  >
-                    {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                  </button>
+        return (
+          <div
+            key={q.id}
+            className={`rounded-2xl border bg-surface transition-colors ${
+              selected ? "border-orange ring-2 ring-orange/20" : "border-line"
+            }`}
+          >
+            <button onClick={() => onSelect(q.id)} className="w-full text-left px-4 py-3.5">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 w-7 h-7 rounded-full bg-ink text-white text-xs font-semibold flex items-center justify-center shrink-0">
+                  {main}
+                </span>
+                {sub && <span className="mt-1 text-sm text-ink-soft font-medium shrink-0">{sub}</span>}
+                <p className="flex-1 text-sm text-ink leading-snug pt-0.5">{q.text}</p>
+                <div className="flex items-center gap-2 shrink-0">
+                  {grade ? (
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${marksTone(grade.marksAwarded, grade.maxMarks)}`}>
+                      {grade.marksAwarded}/{grade.maxMarks}
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-surface-muted text-ink-faint border border-line">
+                      {statusLabel(mapping)}
+                    </span>
+                  )}
+                  {expanded ? (
+                    <ChevronUp size={16} className="text-ink-faint" />
+                  ) : (
+                    <ChevronDown size={16} className="text-ink-faint" />
+                  )}
                 </div>
               </div>
+            </button>
 
-              {/* Expanded Section: AI Feedback Box */}
-              {isExpanded && mapping?.feedback && (
-                <div className="ai-feedback-container">
-                  <div className="ai-feedback-label">AI Feedback</div>
-                  <p className="ai-feedback-text">{mapping.feedback}</p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+            {expanded && (
+              <div className="px-4 pb-4 space-y-2.5">
+                {answerTexts.length > 0 ? (
+                  <div className="rounded-xl bg-surface-muted border border-line px-3.5 py-2.5">
+                    <p className="text-[11px] font-semibold text-ink-faint uppercase tracking-wide mb-1">
+                      Transcribed answer
+                    </p>
+                    {answerTexts.map((t, i) => (
+                      <p key={i} className="text-sm text-ink-soft mb-1 last:mb-0">
+                        {t}
+                      </p>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-ink-faint italic">No matching answer found on the sheet.</p>
+                )}
+                {grade && (
+                  <div className="rounded-xl bg-surface-muted border border-line px-3.5 py-2.5">
+                    <p className="text-[11px] font-semibold text-ink-faint uppercase tracking-wide mb-1">
+                      AI Feedback
+                    </p>
+                    <p className="text-sm text-ink-soft">{grade.feedback}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
-};
+}

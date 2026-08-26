@@ -1,0 +1,43 @@
+import type { ExtractedAnswerBlock, ExtractedQuestion, QuestionMapping } from "./types";
+
+/** Normalizes a printed/handwritten question number for comparison, e.g. "Q11 (a)" -> "11a". */
+export function normalizeNumber(raw: string | null | undefined): string {
+  if (!raw) return "";
+  return raw
+    .toLowerCase()
+    .replace(/^q\.?\s*/i, "")
+    .replace(/[().\-\s]/g, "")
+    .trim();
+}
+
+export interface MappingResult {
+  mappings: QuestionMapping[];
+  unmatchedAnswers: ExtractedAnswerBlock[]; // answers whose matchedNumber didn't hit any known question
+}
+
+/** Groups extracted answer blocks under the question they answer, by normalized printed number. */
+export function mapAnswersToQuestions(
+  questions: ExtractedQuestion[],
+  answers: ExtractedAnswerBlock[]
+): MappingResult {
+  const byNorm = new Map<string, string[]>(); // normalized question number -> answer ids
+  for (const q of questions) byNorm.set(normalizeNumber(q.number), []);
+
+  const unmatchedAnswers: ExtractedAnswerBlock[] = [];
+
+  for (const a of answers) {
+    const norm = normalizeNumber(a.matchedNumber);
+    if (norm && byNorm.has(norm)) {
+      byNorm.get(norm)!.push(a.id);
+    } else {
+      unmatchedAnswers.push(a);
+    }
+  }
+
+  const mappings: QuestionMapping[] = questions.map((q) => ({
+    questionId: q.id,
+    answerIds: byNorm.get(normalizeNumber(q.number)) ?? [],
+  }));
+
+  return { mappings, unmatchedAnswers };
+}
