@@ -11,6 +11,18 @@ const getGeminiClient = () => {
   return new GoogleGenerativeAI(apiKey);
 };
 
+function parseInlineData(dataUrl: string) {
+  const match = dataUrl.match(/^data:([^;]+);base64,/);
+  const mimeType = match ? match[1] : 'image/png';
+  const base64Data = dataUrl.replace(/^data:[^;]+;base64,/, '');
+  return {
+    inlineData: {
+      data: base64Data,
+      mimeType,
+    },
+  };
+}
+
 /**
  * Extracts questions from question paper images using Gemini 2.0 Flash
  */
@@ -19,17 +31,9 @@ export async function processQuestionPaper(pageImages: string[]): Promise<Questi
   if (!ai) return demoAssessmentData.questions;
 
   try {
-    const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = ai.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
-    const imageParts = pageImages.map(img => {
-      const base64Data = img.replace(/^data:image\/\w+;base64,/, '');
-      return {
-        inlineData: {
-          data: base64Data,
-          mimeType: 'image/png',
-        },
-      };
-    });
+    const imageParts = pageImages.map(img => parseInlineData(img));
 
     const prompt = `
 You are an expert AI assessment analyzer. Analyze the provided question paper image(s) and extract every single question.
@@ -85,17 +89,9 @@ export async function processAnswerSheetAndMap(
   if (!ai) return demoAssessmentData;
 
   try {
-    const model = ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = ai.getGenerativeModel({ model: 'gemini-3.6-flash' });
 
-    const answerImageParts = answerPageImages.map((img, idx) => {
-      const base64Data = img.replace(/^data:image\/\w+;base64,/, '');
-      return {
-        inlineData: {
-          data: base64Data,
-          mimeType: 'image/png',
-        },
-      };
-    });
+    const answerImageParts = answerPageImages.map(img => parseInlineData(img));
 
     const prompt = `
 You are an expert AI assessment grader and handwriting recognition engine.
