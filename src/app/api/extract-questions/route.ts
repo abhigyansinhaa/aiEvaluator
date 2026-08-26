@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callGeminiJSON, GeminiError } from "@/lib/gemini";
+import { box2dToBBox, callGeminiJSON, GeminiError } from "@/lib/gemini";
 import type { ExtractedQuestion } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -13,11 +13,11 @@ Rules:
   with number formatted as "<parent> (<sub>)", e.g. "11 (a)" and "11 (b)".
 - Keep questions in the correct printed order.
 - "text" should be the full question text (transcribed), excluding the number itself.
-- "bbox" is the tight bounding box of that question's text block (including its sub-parts' own
-  boxes are separate), as fractions of the page width/height: [x0, y0, x1, y1], where (0,0) is the
-  top-left corner of the page and (1,1) is the bottom-right corner.
+- "box_2d" is the tight bounding box of that question's text block (sub-parts get their own boxes),
+  as [ymin, xmin, ymax, xmax] normalized to 0-1000 — this is the standard Gemini bounding-box format.
+  It MUST cover every line of the question's text, not just the first line.
 - "page" is the 0-indexed image index this question appears on (matching the order pages were given).
-- If a question spans two pages, use the page and bbox of where its number/main body starts.
+- If a question spans two pages, use the page and box_2d of where its number/main body starts.
 - Do not invent questions that are not present. Do not skip any.`;
 
 export async function POST(req: NextRequest) {
@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
 
     const prompt = `Here are ${images.length} page image(s) of a question paper, in order (page 0 first).
 Return ONLY a JSON array of questions, each shaped as:
-{"number": string, "text": string, "page": number, "bbox": [x0,y0,x1,y1]}`;
+{"number": string, "text": string, "page": number, "box_2d": [ymin,xmin,ymax,xmax]}`;
 
     const result = await callGeminiJSON<
-      Array<{ number: string; text: string; page: number; bbox: [number, number, number, number] }>
+      Array<{ number: string; text: string; page: number; box_2d: [number, number, number, number] }>
     >({
       systemInstruction: SYSTEM_INSTRUCTION,
       prompt,
@@ -44,7 +44,7 @@ Return ONLY a JSON array of questions, each shaped as:
       number: q.number,
       text: q.text,
       page: q.page,
-      bbox: q.bbox,
+      bbox: box2dToBBox(q.box_2d),
     }));
 
     return NextResponse.json({ questions });

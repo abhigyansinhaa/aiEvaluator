@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { callGeminiJSON, GeminiError } from "@/lib/gemini";
+import { box2dToBBox, callGeminiJSON, GeminiError } from "@/lib/gemini";
 import type { ExtractedAnswerBlock } from "@/lib/types";
 
 export const maxDuration = 60;
@@ -22,15 +22,13 @@ Rules:
 - Students may answer out of the printed order — that is expected and fine.
 - Include blocks that don't match any known question number too (matchedNumber: null); e.g. rough
   work, or an answer to a question number that isn't in the provided list.
-- "bbox" is a GENEROUS bounding box of the block, as fractions of the page width/height:
-  [x0, y0, x1, y1], (0,0) top-left, (1,1) bottom-right.
-  IMPORTANT: The bbox MUST encompass ALL of the student's writing for that answer — including:
+- "box_2d" is the bounding box of the block, as [ymin, xmin, ymax, xmax] normalized to 0-1000 — this
+  is the standard Gemini bounding-box format.
+  It MUST encompass ALL of the student's writing for that answer, top to bottom and left to right:
   * The question label written by the student (e.g. "Ans 1.", "Q1.")
-  * ALL continuation lines of the answer text
+  * ALL continuation lines of the answer text, including wrapped lines that run near the page edge
   * Any diagrams, chemical equations, formula boxes, or tables drawn as part of the answer
-  * Any rough work or crossed-out text adjacent to the answer
-  Err on the side of making the bbox slightly LARGER than needed rather than too tight.
-  Add a small margin (~2-3% of page dimensions) around the text edges.
+  Do not return a box that only covers the first line of a multi-line answer.
 - "page" is the 0-indexed image index (matching the order pages were given).`;
 
 export async function POST(req: NextRequest) {
@@ -44,14 +42,14 @@ export async function POST(req: NextRequest) {
 Known question numbers from the question paper: ${JSON.stringify(questionNumbers ?? [])}
 
 Return ONLY a JSON array of answer blocks, each shaped as:
-{"matchedNumber": string | null, "text": string, "page": number, "bbox": [x0,y0,x1,y1]}`;
+{"matchedNumber": string | null, "text": string, "page": number, "box_2d": [ymin,xmin,ymax,xmax]}`;
 
     const result = await callGeminiJSON<
       Array<{
         matchedNumber: string | null;
         text: string;
         page: number;
-        bbox: [number, number, number, number];
+        box_2d: [number, number, number, number];
       }>
     >({
       systemInstruction: SYSTEM_INSTRUCTION,
@@ -64,7 +62,7 @@ Return ONLY a JSON array of answer blocks, each shaped as:
       matchedNumber: a.matchedNumber,
       text: a.text,
       page: a.page,
-      bbox: a.bbox,
+      bbox: box2dToBBox(a.box_2d),
     }));
 
     return NextResponse.json({ answers });

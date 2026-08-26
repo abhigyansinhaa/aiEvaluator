@@ -18,6 +18,19 @@ interface GeminiCallOptions {
 
 export class GeminiError extends Error {}
 
+/**
+ * Gemini's vision grounding is trained specifically on bounding boxes as
+ * box_2d: [ymin, xmin, ymax, xmax], normalized to 0-1000, y-axis first. Asking
+ * it for a different axis order or scale (e.g. [x0,y0,x1,y1] on 0-1) produces
+ * inconsistent, undersized boxes, because that isn't the format it was tuned
+ * on. Always prompt for box_2d in its native format, then convert here.
+ * See: https://ai.google.dev/gemini-api/docs/image-understanding
+ */
+export function box2dToBBox(box2d: [number, number, number, number]): [number, number, number, number] {
+  const [ymin, xmin, ymax, xmax] = box2d;
+  return [xmin / 1000, ymin / 1000, xmax / 1000, ymax / 1000];
+}
+
 /** Calls Gemini with a text prompt + images, forcing a JSON response, and returns the parsed JSON. */
 export async function callGeminiJSON<T>(opts: GeminiCallOptions): Promise<T> {
   const apiKey = process.env.GEMINI_API_KEY;

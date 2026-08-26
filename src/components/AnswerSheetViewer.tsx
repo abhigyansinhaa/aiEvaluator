@@ -12,30 +12,9 @@ interface AnswerSheetViewerProps {
   jumpToPage: number | null;
 }
 
-/** Computes padded bboxes that expand into available space but never overlap neighbors. */
-function computePaddedBboxes(blocks: ExtractedAnswerBlock[]) {
-  // Sort by vertical position (top edge)
-  const sorted = [...blocks].sort((a, b) => a.bbox[1] - b.bbox[1]);
-
-  return sorted.map((block, idx) => {
-    const [x0, y0, x1, y1] = block.bbox;
-
-    // Vertical: expand toward prev/next block, but only into the gap (up to 40% of gap)
-    const prevBottom = idx > 0 ? sorted[idx - 1].bbox[3] : 0;
-    const nextTop = idx < sorted.length - 1 ? sorted[idx + 1].bbox[1] : 1;
-
-    const gapAbove = y0 - prevBottom;
-    const gapBelow = nextTop - y1;
-
-    const py0 = Math.max(0, y0 - Math.min(0.01, gapAbove * 0.4));
-    const py1 = Math.min(1, y1 + Math.min(0.01, gapBelow * 0.4));
-
-    // Horizontal: small fixed padding, clamped to page bounds
-    const px0 = Math.max(0, x0 - 0.01);
-    const px1 = Math.min(1, x1 + 0.01);
-
-    return { block, bbox: [px0, py0, px1, py1] as const };
-  });
+/** Adds a small fixed visual margin around a bbox so the highlight doesn't hug the ink exactly. */
+function padBBox([x0, y0, x1, y1]: ExtractedAnswerBlock["bbox"], margin = 0.006): ExtractedAnswerBlock["bbox"] {
+  return [Math.max(0, x0 - margin), Math.max(0, y0 - margin), Math.min(1, x1 + margin), Math.min(1, y1 + margin)];
 }
 
 export function AnswerSheetViewer({
@@ -58,7 +37,10 @@ export function AnswerSheetViewer({
 
   const page = pages[activePage];
   const blocksOnPage = useMemo(() => answers.filter((a) => a.page === activePage), [answers, activePage]);
-  const paddedBlocks = useMemo(() => computePaddedBboxes(blocksOnPage), [blocksOnPage]);
+  const paddedBlocks = useMemo(
+    () => blocksOnPage.map((block) => ({ block, bbox: padBBox(block.bbox) })),
+    [blocksOnPage]
+  );
 
   if (!page) {
     return (
