@@ -12,6 +12,32 @@ interface AnswerSheetViewerProps {
   jumpToPage: number | null;
 }
 
+/** Computes padded bboxes that expand into available space but never overlap neighbors. */
+function computePaddedBboxes(blocks: ExtractedAnswerBlock[]) {
+  // Sort by vertical position (top edge)
+  const sorted = [...blocks].sort((a, b) => a.bbox[1] - b.bbox[1]);
+
+  return sorted.map((block, idx) => {
+    const [x0, y0, x1, y1] = block.bbox;
+
+    // Vertical: expand toward prev/next block, but only into the gap (up to 40% of gap)
+    const prevBottom = idx > 0 ? sorted[idx - 1].bbox[3] : 0;
+    const nextTop = idx < sorted.length - 1 ? sorted[idx + 1].bbox[1] : 1;
+
+    const gapAbove = y0 - prevBottom;
+    const gapBelow = nextTop - y1;
+
+    const py0 = Math.max(0, y0 - Math.min(0.01, gapAbove * 0.4));
+    const py1 = Math.min(1, y1 + Math.min(0.01, gapBelow * 0.4));
+
+    // Horizontal: small fixed padding, clamped to page bounds
+    const px0 = Math.max(0, x0 - 0.01);
+    const px1 = Math.min(1, x1 + 0.01);
+
+    return { block, bbox: [px0, py0, px1, py1] as const };
+  });
+}
+
 export function AnswerSheetViewer({
   pages,
   answers,
@@ -32,6 +58,7 @@ export function AnswerSheetViewer({
 
   const page = pages[activePage];
   const blocksOnPage = useMemo(() => answers.filter((a) => a.page === activePage), [answers, activePage]);
+  const paddedBlocks = useMemo(() => computePaddedBboxes(blocksOnPage), [blocksOnPage]);
 
   if (!page) {
     return (
@@ -97,22 +124,21 @@ export function AnswerSheetViewer({
             alt={`Answer sheet page ${activePage + 1}`}
             className="block w-full h-auto rounded-sm"
           />
-          {blocksOnPage.map((block) => {
+          {paddedBlocks.map(({ block, bbox: [px0, py0, px1, py1] }) => {
             const isHighlighted = highlightedAnswerIds.includes(block.id);
-            const [x0, y0, x1, y1] = block.bbox;
             return (
               <div
                 key={block.id}
                 title={block.text}
                 className="absolute rounded-lg transition-all duration-300"
                 style={{
-                  left: `${x0 * 100}%`,
-                  top: `${y0 * 100}%`,
-                  width: `${(x1 - x0) * 100}%`,
-                  height: `${(y1 - y0) * 100}%`,
-                  border: isHighlighted ? "2px solid var(--green)" : "1px solid transparent",
-                  background: isHighlighted ? "rgba(47,158,79,0.14)" : "transparent",
-                  boxShadow: isHighlighted ? "0 2px 8px rgba(47,158,79,0.25)" : "none",
+                  left: `${px0 * 100}%`,
+                  top: `${py0 * 100}%`,
+                  width: `${(px1 - px0) * 100}%`,
+                  height: `${(py1 - py0) * 100}%`,
+                  border: isHighlighted ? "2.5px solid var(--green)" : "1px solid transparent",
+                  background: isHighlighted ? "rgba(47,158,79,0.18)" : "transparent",
+                  boxShadow: isHighlighted ? "0 2px 12px rgba(47,158,79,0.3)" : "none",
                 }}
               >
                 {isHighlighted && highlightedLabel && (

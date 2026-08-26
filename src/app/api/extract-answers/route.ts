@@ -13,16 +13,24 @@ Rules:
   a single question.
 - For each block, transcribe the text as best you can (handwriting OCR; approximate where illegible,
   wrapping uncertain words in [brackets]).
-- "matchedNumber" is your best guess at which printed question number this block answers, based on
-  what the student wrote (e.g. "Q11(a)", "11 a)", "Ans 2") or its position/content relative to the
-  known question list. If you cannot confidently tell, set it to null — do not guess randomly.
+- "matchedNumber" MUST be the exact question number from the known question list that this answer
+  corresponds to. The student may write it as "Ans 1", "Q1.", "1.", "1)", etc. Normalize to the
+  original question number format from the provided list (e.g. if the list has "1", return "1").
+  If you cannot confidently tell, set it to null — do not guess randomly.
 - If a single answer continues across multiple pages, output separate blocks (one per page) that all
   share the same matchedNumber.
 - Students may answer out of the printed order — that is expected and fine.
 - Include blocks that don't match any known question number too (matchedNumber: null); e.g. rough
   work, or an answer to a question number that isn't in the provided list.
-- "bbox" is the tight bounding box of the block, as fractions of the page width/height:
+- "bbox" is a GENEROUS bounding box of the block, as fractions of the page width/height:
   [x0, y0, x1, y1], (0,0) top-left, (1,1) bottom-right.
+  IMPORTANT: The bbox MUST encompass ALL of the student's writing for that answer — including:
+  * The question label written by the student (e.g. "Ans 1.", "Q1.")
+  * ALL continuation lines of the answer text
+  * Any diagrams, chemical equations, formula boxes, or tables drawn as part of the answer
+  * Any rough work or crossed-out text adjacent to the answer
+  Err on the side of making the bbox slightly LARGER than needed rather than too tight.
+  Add a small margin (~2-3% of page dimensions) around the text edges.
 - "page" is the 0-indexed image index (matching the order pages were given).`;
 
 export async function POST(req: NextRequest) {

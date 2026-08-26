@@ -5,8 +5,10 @@ export function normalizeNumber(raw: string | null | undefined): string {
   if (!raw) return "";
   return raw
     .toLowerCase()
-    .replace(/^q\.?\s*/i, "")
-    .replace(/[().\-\s]/g, "")
+    // strip common prefixes: "q.", "q ", "ans", "ans.", "answer", "answer:", "sol", "sol."
+    .replace(/^(ans\.?w?e?r?\.?\s*:?\s*|sol\.?\s*:?\s*|q\.?\s*)/i, "")
+    // strip all punctuation, parens, hyphens, dots, colons, and whitespace
+    .replace(/[().:\-\s]/g, "")
     .trim();
 }
 
