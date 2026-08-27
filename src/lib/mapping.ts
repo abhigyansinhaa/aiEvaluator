@@ -12,6 +12,17 @@ export function normalizeNumber(raw: string | null | undefined): string {
     .trim();
 }
 
+/** Formats a question number cleanly for display on badges, e.g. "8" or "Q8." -> "Q No. 8". */
+export function formatQuestionLabel(raw: string | null | undefined): string {
+  if (!raw) return "";
+  const cleaned = raw
+    .trim()
+    .replace(/^(q(?:uestion)?\.?\s*(?:no\.?)?\s*)/i, "")
+    .replace(/[.:]+$/, "")
+    .trim();
+  return `Q No. ${cleaned || raw}`;
+}
+
 export interface MappingResult {
   mappings: QuestionMapping[];
   unmatchedAnswers: ExtractedAnswerBlock[]; // answers whose matchedNumber didn't hit any known question

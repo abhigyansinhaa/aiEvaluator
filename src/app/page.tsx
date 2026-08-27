@@ -8,7 +8,7 @@ import { QuestionList } from "@/components/QuestionList";
 import { AnswerSheetViewer } from "@/components/AnswerSheetViewer";
 import { GradingSummary } from "@/components/GradingSummary";
 import { filesToPageImages } from "@/lib/pdf";
-import { mapAnswersToQuestions, normalizeNumber } from "@/lib/mapping";
+import { formatQuestionLabel, mapAnswersToQuestions, normalizeNumber } from "@/lib/mapping";
 import type {
   ExtractedAnswerBlock,
   ExtractedQuestion,
@@ -340,7 +340,7 @@ export default function Home() {
                   pages={answerPages}
                   answers={answers}
                   highlightedAnswerIds={highlightedAnswerIds}
-                  highlightedLabel={selectedQuestion ? `Q${selectedQuestion.number}` : null}
+                  highlightedLabel={selectedQuestion ? formatQuestionLabel(selectedQuestion.number) : null}
                   jumpToPage={jumpToPage}
                   onAnswerClick={handleAnswerClick}
                 />

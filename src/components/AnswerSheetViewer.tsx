@@ -129,7 +129,7 @@ export function AnswerSheetViewer({
                 }}
               >
                 {isHighlighted && highlightedLabel && (
-                  <span className="absolute -top-3 -left-1 bg-green text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm">
+                  <span className="absolute -top-3 -left-1 bg-green text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm whitespace-nowrap z-10">
                     {highlightedLabel}
                   </span>
                 )}
