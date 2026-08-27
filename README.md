@@ -4,7 +4,10 @@ An AI-powered exam evaluation tool that lets teachers upload a **question paper*
 
 1. **Extracts** every printed question (with bounding boxes)
 2. **Reads** handwritten answers via OCR and maps them to the correct question
-3. **Grades** each answer with marks, verdict, and constructive feedback
+3. **Interactive Bidirectional Mapping**:
+   - Click any question to highlight and jump to its mapped answer on the answer sheet.
+   - Click any highlighted answer bounding box on the sheet to instantly select and focus the corresponding question.
+4. **Grades** each answer with marks, verdict, and constructive feedback
 
 Built with **Next.js 16**, **Tailwind CSS 4**, and **Google Gemini Flash** for vision + language.
 

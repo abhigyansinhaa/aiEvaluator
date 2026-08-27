@@ -10,6 +10,7 @@ interface AnswerSheetViewerProps {
   highlightedAnswerIds: string[];
   highlightedLabel: string | null;
   jumpToPage: number | null;
+  onAnswerClick?: (answer: ExtractedAnswerBlock) => void;
 }
 
 /** Adds a small fixed visual margin around a bbox so the highlight doesn't hug the ink exactly. */
@@ -23,6 +24,7 @@ export function AnswerSheetViewer({
   highlightedAnswerIds,
   highlightedLabel,
   jumpToPage,
+  onAnswerClick,
 }: AnswerSheetViewerProps) {
   const [activePage, setActivePage] = useState(0);
   const [zoom, setZoom] = useState(100);
@@ -114,7 +116,8 @@ export function AnswerSheetViewer({
               <div
                 key={block.id}
                 title={block.text}
-                className="absolute rounded-lg transition-all duration-300"
+                onClick={() => block.matchedNumber !== null && onAnswerClick?.(block)}
+                className={`absolute rounded-lg transition-all duration-300 ${block.matchedNumber !== null ? "cursor-pointer" : ""}`}
                 style={{
                   left: `${px0 * 100}%`,
                   top: `${py0 * 100}%`,

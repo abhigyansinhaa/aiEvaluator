@@ -8,7 +8,7 @@ import { QuestionList } from "@/components/QuestionList";
 import { AnswerSheetViewer } from "@/components/AnswerSheetViewer";
 import { GradingSummary } from "@/components/GradingSummary";
 import { filesToPageImages } from "@/lib/pdf";
-import { mapAnswersToQuestions } from "@/lib/mapping";
+import { mapAnswersToQuestions, normalizeNumber } from "@/lib/mapping";
 import type {
   ExtractedAnswerBlock,
   ExtractedQuestion,
@@ -167,6 +167,16 @@ export default function Home() {
     highlightedAnswerIds.length > 0 ? answersById.get(highlightedAnswerIds[0])?.page ?? null : null;
 
   const showWorkspace = stage === "done";
+
+  function handleAnswerClick(answer: ExtractedAnswerBlock) {
+    if (!answer.matchedNumber) return;
+    const norm = normalizeNumber(answer.matchedNumber);
+    const q = questions.find((q) => normalizeNumber(q.number) === norm);
+    if (q) {
+      setSelectedQuestionId(q.id);
+      setMobileTab("questions");
+    }
+  }
 
   return (
     <AppShell
@@ -332,6 +342,7 @@ export default function Home() {
                   highlightedAnswerIds={highlightedAnswerIds}
                   highlightedLabel={selectedQuestion ? `Q${selectedQuestion.number}` : null}
                   jumpToPage={jumpToPage}
+                  onAnswerClick={handleAnswerClick}
                 />
               </div>
             </section>
