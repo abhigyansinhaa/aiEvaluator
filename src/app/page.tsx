@@ -169,7 +169,10 @@ export default function Home() {
   const showWorkspace = stage === "done";
 
   return (
-    <AppShell sidebarExpanded={!showWorkspace && !isProcessing}>
+    <AppShell
+      sidebarExpanded={!showWorkspace && !isProcessing}
+      onBack={reset}
+    >
       {!showWorkspace && !isProcessing && (
         <div className="flex-1 overflow-auto flex items-start justify-center px-6 py-14">
           <div className="w-full max-w-2xl text-center">
