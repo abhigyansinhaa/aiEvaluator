@@ -25,10 +25,27 @@ function statusLabel(mapping: QuestionMapping | undefined): string {
   return "Answered";
 }
 
+function statusTone(mapping: QuestionMapping | undefined): string {
+  if (!mapping || mapping.answerIds.length === 0) return "bg-amber-soft text-amber border border-amber-border";
+  if (mapping.answerIds.length > 1) return "bg-blue-soft text-blue border border-blue-border";
+  return "bg-green-soft text-green border border-green-border";
+}
+
 const marksTone = (awarded: number, max: number) => {
   if (awarded <= 0) return "bg-red-soft text-red border border-red-border";
   if (awarded >= max) return "bg-green-soft text-green border border-green-border";
   return "bg-amber-soft text-amber border border-amber-border";
+};
+
+const accentColor = (mapping: QuestionMapping | undefined, grade: GradeResult | undefined): string => {
+  if (grade) {
+    if (grade.marksAwarded <= 0) return "var(--red)";
+    if (grade.marksAwarded >= grade.maxMarks) return "var(--green)";
+    return "var(--amber)";
+  }
+  if (!mapping || mapping.answerIds.length === 0) return "var(--amber)";
+  if (mapping.answerIds.length > 1) return "var(--blue)";
+  return "var(--green)";
 };
 
 export function QuestionList({
@@ -57,6 +74,7 @@ export function QuestionList({
         return (
           <div
             key={q.id}
+            style={{ borderLeftColor: accentColor(mapping, grade), borderLeftWidth: 4 }}
             className={`rounded-2xl border bg-surface transition-colors ${
               selected ? "border-orange ring-2 ring-orange/20" : "border-line"
             }`}
@@ -74,7 +92,7 @@ export function QuestionList({
                       {grade.marksAwarded}/{grade.maxMarks}
                     </span>
                   ) : (
-                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-surface-muted text-ink-faint border border-line">
+                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${statusTone(mapping)}`}>
                       {statusLabel(mapping)}
                     </span>
                   )}

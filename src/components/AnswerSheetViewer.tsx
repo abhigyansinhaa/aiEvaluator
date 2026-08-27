@@ -108,6 +108,8 @@ export function AnswerSheetViewer({
           />
           {paddedBlocks.map(({ block, bbox: [px0, py0, px1, py1] }) => {
             const isHighlighted = highlightedAnswerIds.includes(block.id);
+            const isMatched = block.matchedNumber !== null;
+            const defaultBorder = isMatched ? "1.5px dashed rgba(37,99,168,0.4)" : "1.5px dashed rgba(201,121,26,0.5)";
             return (
               <div
                 key={block.id}
@@ -118,7 +120,7 @@ export function AnswerSheetViewer({
                   top: `${py0 * 100}%`,
                   width: `${(px1 - px0) * 100}%`,
                   height: `${(py1 - py0) * 100}%`,
-                  border: isHighlighted ? "2.5px solid var(--green)" : "1px solid transparent",
+                  border: isHighlighted ? "2.5px solid var(--green)" : defaultBorder,
                   background: isHighlighted ? "rgba(47,158,79,0.18)" : "transparent",
                   boxShadow: isHighlighted ? "0 2px 12px rgba(47,158,79,0.3)" : "none",
                 }}
@@ -132,6 +134,21 @@ export function AnswerSheetViewer({
             );
           })}
         </div>
+      </div>
+
+      <div className="flex items-center gap-4 px-4 py-2 border-t border-line bg-surface shrink-0 text-[11px] text-ink-soft">
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm border border-dashed" style={{ borderColor: "rgba(37,99,168,0.6)" }} />
+          Matched answer
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm border border-dashed" style={{ borderColor: "rgba(201,121,26,0.6)" }} />
+          Unmatched / rough work
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-sm bg-green" />
+          Selected
+        </span>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { AppShell } from "@/components/AppShell";
 import { UploadZone } from "@/components/UploadZone";
 import { QuestionList } from "@/components/QuestionList";
 import { AnswerSheetViewer } from "@/components/AnswerSheetViewer";
+import { GradingSummary } from "@/components/GradingSummary";
 import { filesToPageImages } from "@/lib/pdf";
 import { mapAnswersToQuestions } from "@/lib/mapping";
 import type {
@@ -34,6 +35,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   const [answerPages, setAnswerPages] = useState<PageImage[]>([]);
+  const [studentName, setStudentName] = useState<string | null>(null);
   const [questions, setQuestions] = useState<ExtractedQuestion[]>([]);
   const [answers, setAnswers] = useState<ExtractedAnswerBlock[]>([]);
   const [mappings, setMappings] = useState<QuestionMapping[]>([]);
@@ -92,6 +94,7 @@ export default function Home() {
       if (!aRes.ok) throw new Error(aData.error || "Failed to extract answers");
       const extractedAnswers: ExtractedAnswerBlock[] = aData.answers;
       setAnswers(extractedAnswers);
+      setStudentName(aData.studentName ?? null);
 
       setStage("mapping");
       const { mappings: m, unmatchedAnswers } = mapAnswersToQuestions(extractedQuestions, extractedAnswers);
@@ -147,6 +150,7 @@ export default function Home() {
     setStage("idle");
     setError(null);
     setAnswerPages([]);
+    setStudentName(null);
     setQuestions([]);
     setAnswers([]);
     setMappings([]);
@@ -258,6 +262,13 @@ export default function Home() {
               </button>
             ))}
           </div>
+
+          <GradingSummary
+            studentName={studentName}
+            onStudentNameChange={setStudentName}
+            grades={grades}
+            totalQuestions={questions.length}
+          />
 
           <div className="flex-1 flex min-h-0 overflow-hidden">
             <section

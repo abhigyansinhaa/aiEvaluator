@@ -9,6 +9,10 @@ You are given page images in reading order, page 0 first, plus the list of quest
 matching question paper for context.
 
 Rules:
+- If the student's name (and/or roll number) is written on the sheet, usually near the top of the
+  first page (e.g. "Name: ___", "Student Name: ___", "Roll No: ___"), extract it as "studentName".
+  Combine name and roll number into one readable string if both are present (e.g. "Priya Sharma (Roll 14)").
+  If no name is visible anywhere, set "studentName" to null — do not guess or invent one.
 - Segment the handwriting into answer blocks: one block per contiguous chunk of writing that answers
   a single question.
 - For each block, transcribe the text as best you can (handwriting OCR; approximate where illegible,
@@ -21,7 +25,8 @@ Rules:
   share the same matchedNumber.
 - Students may answer out of the printed order — that is expected and fine.
 - Include blocks that don't match any known question number too (matchedNumber: null); e.g. rough
-  work, or an answer to a question number that isn't in the provided list.
+  work, or an answer to a question number that isn't in the provided list. Do NOT include the
+  name/roll-number header itself as an answer block.
 - "box_2d" is the bounding box of the block, as [ymin, xmin, ymax, xmax] normalized to 0-1000 — this
   is the standard Gemini bounding-box format.
   It MUST encompass ALL of the student's writing for that answer, top to bottom and left to right:
@@ -30,6 +35,16 @@ Rules:
   * Any diagrams, chemical equations, formula boxes, or tables drawn as part of the answer
   Do not return a box that only covers the first line of a multi-line answer.
 - "page" is the 0-indexed image index (matching the order pages were given).`;
+
+interface AnswerApiResult {
+  studentName: string | null;
+  answers: Array<{
+    matchedNumber: string | null;
+    text: string;
+    page: number;
+    box_2d: [number, number, number, number];
+  }>;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,23 +56,16 @@ export async function POST(req: NextRequest) {
     const prompt = `Here are ${images.length} page image(s) of a student's handwritten answer sheet, in order (page 0 first).
 Known question numbers from the question paper: ${JSON.stringify(questionNumbers ?? [])}
 
-Return ONLY a JSON array of answer blocks, each shaped as:
-{"matchedNumber": string | null, "text": string, "page": number, "box_2d": [ymin,xmin,ymax,xmax]}`;
+Return ONLY a JSON object shaped as:
+{"studentName": string | null, "answers": [{"matchedNumber": string | null, "text": string, "page": number, "box_2d": [ymin,xmin,ymax,xmax]}]}`;
 
-    const result = await callGeminiJSON<
-      Array<{
-        matchedNumber: string | null;
-        text: string;
-        page: number;
-        box_2d: [number, number, number, number];
-      }>
-    >({
+    const result = await callGeminiJSON<AnswerApiResult>({
       systemInstruction: SYSTEM_INSTRUCTION,
       prompt,
       images: images.map((b64: string) => ({ base64: b64, mimeType: "image/jpeg" })),
     });
 
-    const answers: ExtractedAnswerBlock[] = result.map((a, i) => ({
+    const answers: ExtractedAnswerBlock[] = result.answers.map((a, i) => ({
       id: `a-${i}`,
       matchedNumber: a.matchedNumber,
       text: a.text,
@@ -65,7 +73,7 @@ Return ONLY a JSON array of answer blocks, each shaped as:
       bbox: box2dToBBox(a.box_2d),
     }));
 
-    return NextResponse.json({ answers });
+    return NextResponse.json({ answers, studentName: result.studentName ?? null });
   } catch (err) {
     const message = err instanceof GeminiError ? err.message : "Failed to extract answers";
     console.error(err);
