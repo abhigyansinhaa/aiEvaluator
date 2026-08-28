@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
 import type { ExtractedAnswerBlock, PageImage } from "@/lib/types";
@@ -199,7 +197,7 @@ export function AnswerSheetViewer({
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 px-4 py-2.5 border-t border-line bg-surface shrink-0 text-[11px] text-ink-soft rounded-b-2xl">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 sm:py-2.5 border-t border-line bg-surface shrink-0 text-[11px] text-ink-soft rounded-b-2xl">
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-sm border border-dashed" style={{ borderColor: "rgba(37,99,168,0.6)" }} />
           Matched answer

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Pencil, Check } from "lucide-react";
 import type { GradeResult } from "@/lib/types";

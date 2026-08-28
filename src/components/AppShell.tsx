@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -33,7 +31,7 @@ const NAV_ITEMS = [
 
 function BrandMark() {
   return (
-    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange to-red flex items-center justify-center shrink-0 shadow-sm">
+    <div className="w-8 h-8 rounded-lg bg-linear-to-br from-orange to-red flex items-center justify-center shrink-0 shadow-sm">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2L4 8V22H9V14H15V22H20V8L12 2Z" fill="white" fillOpacity="0.95" />
         <path d="M10 10H14V12H10V10Z" fill="white" fillOpacity="0.6" />
@@ -121,7 +119,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
       {mobileNavOpen && (
         <div className="sm:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileNavOpen(false)} />
-          <div className="relative w-[78%] max-w-[280px] bg-surface flex flex-col h-full shadow-xl rounded-r-2xl">
+          <div className="relative w-[78%] max-w-70 bg-surface flex flex-col h-full shadow-xl rounded-r-2xl">
             <div className="flex items-center justify-between px-4 py-4 border-b border-line">
               <div className="flex items-center gap-2">
                 <BrandMark />
@@ -146,7 +144,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
         {/* Desktop/tablet sidebar — floating rounded panel */}
         <aside
           className={`hidden sm:flex shrink-0 flex-col bg-surface rounded-2xl shadow-sm transition-all duration-300 ${
-            sidebarExpanded ? "w-[256px]" : "w-[68px]"
+            sidebarExpanded ? "w-[256px]" : "w-17"
           }`}
         >
           <div className={`flex items-center gap-2 px-4 py-5 ${sidebarExpanded ? "" : "justify-center px-0"}`}>

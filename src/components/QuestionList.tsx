@@ -1,5 +1,3 @@
-"use client";
-
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type { ExtractedAnswerBlock, ExtractedQuestion, GradeResult, QuestionMapping } from "@/lib/types";
 

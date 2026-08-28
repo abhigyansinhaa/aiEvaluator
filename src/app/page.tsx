@@ -8,7 +8,7 @@ import { QuestionList } from "@/components/QuestionList";
 import { AnswerSheetViewer } from "@/components/AnswerSheetViewer";
 import { GradingSummary } from "@/components/GradingSummary";
 import { filesToPageImages } from "@/lib/pdf";
-import { mapAnswersToQuestions } from "@/lib/mapping";
+import { mapAnswersToQuestions, normalizeNumber } from "@/lib/mapping";
 import type {
   ExtractedAnswerBlock,
   ExtractedQuestion,
@@ -168,12 +168,22 @@ export default function Home() {
 
   const showWorkspace = stage === "done";
 
+  function handleAnswerClick(answer: ExtractedAnswerBlock) {
+    if (!answer.matchedNumber) return;
+    const norm = normalizeNumber(answer.matchedNumber);
+    const q = questions.find((q) => normalizeNumber(q.number) === norm);
+    if (q) {
+      setSelectedQuestionId(q.id);
+      setMobileTab("questions");
+    }
+  }
+
   return (
     <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
-        <div className="flex-1 overflow-auto flex items-start justify-center px-6 py-14 relative">
+        <div className="flex-1 overflow-auto flex items-start justify-center px-4 py-8 sm:px-6 sm:py-14 relative">
           <div className="w-full max-w-2xl text-center">
-            <h1 className="text-3xl font-bold text-ink">
+            <h1 className="text-2xl sm:text-3xl font-bold text-ink">
               Upload{" "}
               <span className="bg-orange-soft text-orange px-2 py-0.5 rounded-md">
                 Question Paper &amp; Answer Sheets
@@ -221,7 +231,7 @@ export default function Home() {
           </div>
 
           {/* Bottom gradient fade — matches Figma greyed-out footer */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/60 to-transparent rounded-b-2xl" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-bg via-(--bg)/60 to-transparent rounded-b-2xl" />
         </div>
       )}
 
@@ -330,6 +340,7 @@ export default function Home() {
                   highlightedAnswerIds={highlightedAnswerIds}
                   highlightedLabel={selectedQuestion ? `Q${selectedQuestion.number}` : null}
                   jumpToPage={jumpToPage}
+                  onAnswerClick={handleAnswerClick}
                 />
               </div>
             </section>

@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FileText, Upload, X } from "lucide-react";
 import { getFilePageCount } from "@/lib/pdf";
