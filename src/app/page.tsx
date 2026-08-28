@@ -171,7 +171,7 @@ export default function Home() {
   return (
     <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
-        <div className="flex-1 overflow-auto flex items-start justify-center px-6 py-14">
+        <div className="flex-1 overflow-auto flex items-start justify-center px-6 py-14 relative">
           <div className="w-full max-w-2xl text-center">
             <h1 className="text-3xl font-bold text-ink">
               Upload{" "}
@@ -219,6 +219,9 @@ export default function Home() {
               </p>
             )}
           </div>
+
+          {/* Bottom gradient fade — matches Figma greyed-out footer */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[var(--bg)] via-[var(--bg)]/60 to-transparent rounded-b-2xl" />
         </div>
       )}
 
@@ -254,9 +257,8 @@ export default function Home() {
               <button
                 key={t}
                 onClick={() => setMobileTab(t)}
-                className={`flex-1 text-sm font-medium py-1.5 rounded-full transition-colors ${
-                  mobileTab === t ? "bg-ink text-white" : "text-ink-soft"
-                }`}
+                className={`flex-1 text-sm font-medium py-1.5 rounded-full transition-colors ${mobileTab === t ? "bg-ink text-white" : "text-ink-soft"
+                  }`}
               >
                 {t === "questions" ? "Questions" : "Answer Sheet"}
               </button>
@@ -272,9 +274,8 @@ export default function Home() {
 
           <div className="flex-1 flex min-h-0 overflow-hidden">
             <section
-              className={`w-full sm:w-[44%] border-r border-line flex-col overflow-hidden ${
-                mobileTab === "questions" ? "flex" : "hidden sm:flex"
-              }`}
+              className={`w-full sm:w-[44%] border-r border-line flex-col overflow-hidden ${mobileTab === "questions" ? "flex" : "hidden sm:flex"
+                }`}
             >
               <div className="px-5 py-3 border-b border-line bg-surface flex items-center justify-between shrink-0">
                 <p className="text-sm font-semibold text-ink">Extracted Questions (from question paper)</p>

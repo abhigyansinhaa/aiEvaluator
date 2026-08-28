@@ -33,8 +33,11 @@ const NAV_ITEMS = [
 
 function BrandMark() {
   return (
-    <div className="w-8 h-8 rounded-md bg-ink flex items-center justify-center shrink-0">
-      <span className="text-white text-sm font-bold">V</span>
+    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange to-red flex items-center justify-center shrink-0 shadow-sm">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L4 8V22H9V14H15V22H20V8L12 2Z" fill="white" fillOpacity="0.95" />
+        <path d="M10 10H14V12H10V10Z" fill="white" fillOpacity="0.6" />
+      </svg>
     </div>
   );
 }
@@ -93,8 +96,8 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-bg">
-      {/* Mobile top bar — no sidebar at this width, matches the Figma mobile frames */}
-      <header className="sm:hidden flex items-center justify-between border-b border-line bg-surface px-4 py-3 shrink-0">
+      {/* Mobile top bar */}
+      <header className="sm:hidden flex items-center justify-between bg-surface px-4 py-3 shrink-0 mx-2 mt-2 rounded-2xl shadow-sm">
         <div className="flex items-center gap-2">
           <button onClick={onBack} aria-label="Back to upload" className="text-ink-soft hover:text-ink">
             <ArrowLeft size={18} />
@@ -118,7 +121,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
       {mobileNavOpen && (
         <div className="sm:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileNavOpen(false)} />
-          <div className="relative w-[78%] max-w-[280px] bg-surface flex flex-col h-full shadow-xl">
+          <div className="relative w-[78%] max-w-[280px] bg-surface flex flex-col h-full shadow-xl rounded-r-2xl">
             <div className="flex items-center justify-between px-4 py-4 border-b border-line">
               <div className="flex items-center gap-2">
                 <BrandMark />
@@ -139,11 +142,11 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
         </div>
       )}
 
-      <div className="flex-1 flex min-h-0">
-        {/* Desktop/tablet sidebar */}
+      <div className="flex-1 flex min-h-0 p-2 gap-2">
+        {/* Desktop/tablet sidebar — floating rounded panel */}
         <aside
-          className={`hidden sm:flex shrink-0 flex-col border-r border-line bg-surface transition-all duration-300 ${
-            sidebarExpanded ? "w-[260px]" : "w-[72px]"
+          className={`hidden sm:flex shrink-0 flex-col bg-surface rounded-2xl shadow-sm transition-all duration-300 ${
+            sidebarExpanded ? "w-[256px]" : "w-[68px]"
           }`}
         >
           <div className={`flex items-center gap-2 px-4 py-5 ${sidebarExpanded ? "" : "justify-center px-0"}`}>
@@ -162,9 +165,10 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
           </div>
         </aside>
 
-        <div className="flex-1 flex flex-col min-w-0 min-h-0">
-          {/* Desktop/tablet header */}
-          <header className="hidden sm:flex items-center justify-between border-b border-line bg-surface px-6 py-3.5 shrink-0">
+        {/* Main content column */}
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 gap-2">
+          {/* Desktop/tablet header — floating rounded panel */}
+          <header className="hidden sm:flex items-center justify-between bg-surface rounded-2xl shadow-sm px-6 py-3.5 shrink-0">
             <div className="flex items-center gap-2.5 text-ink-soft">
               <button
                 onClick={onBack}
@@ -188,7 +192,11 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
               </div>
             </div>
           </header>
-          <main className="flex-1 min-h-0 flex flex-col overflow-hidden">{children}</main>
+
+          {/* Main content area — floating rounded panel */}
+          <main className="flex-1 min-h-0 flex flex-col overflow-hidden bg-surface rounded-2xl shadow-sm">
+            {children}
+          </main>
         </div>
       </div>
     </div>

@@ -37,17 +37,6 @@ const marksTone = (awarded: number, max: number) => {
   return "bg-amber-soft text-amber border border-amber-border";
 };
 
-const accentColor = (mapping: QuestionMapping | undefined, grade: GradeResult | undefined): string => {
-  if (grade) {
-    if (grade.marksAwarded <= 0) return "var(--red)";
-    if (grade.marksAwarded >= grade.maxMarks) return "var(--green)";
-    return "var(--amber)";
-  }
-  if (!mapping || mapping.answerIds.length === 0) return "var(--amber)";
-  if (mapping.answerIds.length > 1) return "var(--blue)";
-  return "var(--green)";
-};
-
 export function QuestionList({
   questions,
   mappings,
@@ -74,7 +63,6 @@ export function QuestionList({
         return (
           <div
             key={q.id}
-            style={selected ? undefined : { borderLeftColor: accentColor(mapping, grade), borderLeftWidth: 4 }}
             className={`rounded-2xl border bg-surface transition-colors ${
               selected ? "border-orange ring-2 ring-orange/20" : "border-line"
             }`}

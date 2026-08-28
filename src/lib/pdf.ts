@@ -93,3 +93,17 @@ export async function filesToPageImages(files: File[]): Promise<PageImage[]> {
   }
   return pages;
 }
+
+/** Quickly returns the page count for a PDF or image file without rendering. */
+export async function getFilePageCount(file: File): Promise<number> {
+  if (file.type === "application/pdf") {
+    const pdfjs = await getPdfjs();
+    const buffer = await file.arrayBuffer();
+    const pdf = await pdfjs.getDocument({ data: buffer }).promise;
+    return pdf.numPages;
+  }
+  if (file.type.startsWith("image/")) {
+    return 1;
+  }
+  return 1;
+}
