@@ -68,26 +68,13 @@ function SchoolBadge({ compact }: { compact: boolean }) {
   );
 }
 
-function NavList({
-  expanded,
-  onNavigate,
-  onExamsClick,
-}: {
-  expanded: boolean;
-  onNavigate?: () => void;
-  onExamsClick?: () => void;
-}) {
+function NavList({ expanded, onNavigate }: { expanded: boolean; onNavigate?: () => void }) {
   return (
     <nav className="flex-1 px-3 space-y-1">
       {NAV_ITEMS.map(({ icon: Icon, label, active }) => (
         <button
           key={label}
-          onClick={() => {
-            if (label === "Exams" && onExamsClick) {
-              onExamsClick();
-            }
-            onNavigate?.();
-          }}
+          onClick={onNavigate}
           className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left ${
             active ? "bg-surface-muted text-ink font-medium" : "text-ink-soft"
           } ${expanded ? "" : "justify-center px-0"}`}
@@ -109,12 +96,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
       {/* Mobile top bar — no sidebar at this width, matches the Figma mobile frames */}
       <header className="sm:hidden flex items-center justify-between border-b border-line bg-surface px-4 py-3 shrink-0">
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex items-center text-ink-soft hover:text-ink transition-colors p-1 -ml-1 cursor-pointer"
-            aria-label="Back to Exams"
-          >
+          <button onClick={onBack} aria-label="Back to upload" className="text-ink-soft hover:text-ink">
             <ArrowLeft size={18} />
           </button>
           <BrandMark />
@@ -149,11 +131,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
             <div className="px-4 py-4">
               <ToolkitPill compact={false} />
             </div>
-            <NavList
-              expanded
-              onNavigate={() => setMobileNavOpen(false)}
-              onExamsClick={onBack}
-            />
+            <NavList expanded onNavigate={() => setMobileNavOpen(false)} />
             <div className="px-3 pb-4">
               <SchoolBadge compact={false} />
             </div>
@@ -177,7 +155,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
             <ToolkitPill compact={!sidebarExpanded} />
           </div>
 
-          <NavList expanded={sidebarExpanded} onExamsClick={onBack} />
+          <NavList expanded={sidebarExpanded} />
 
           <div className={`px-3 pb-4 ${sidebarExpanded ? "" : "px-2 flex justify-center"}`}>
             <SchoolBadge compact={!sidebarExpanded} />
@@ -187,15 +165,15 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
         <div className="flex-1 flex flex-col min-w-0 min-h-0">
           {/* Desktop/tablet header */}
           <header className="hidden sm:flex items-center justify-between border-b border-line bg-surface px-6 py-3.5 shrink-0">
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex items-center gap-2.5 text-ink-soft hover:text-ink transition-colors cursor-pointer"
-              aria-label="Back to Exams"
-            >
-              <ArrowLeft size={18} />
-              <span className="text-sm font-medium">Exams</span>
-            </button>
+            <div className="flex items-center gap-2.5 text-ink-soft">
+              <button
+                onClick={onBack}
+                className="flex items-center gap-2.5 text-ink-soft hover:text-ink transition-colors"
+              >
+                <ArrowLeft size={18} />
+                <span className="text-sm font-medium">Exams</span>
+              </button>
+            </div>
             <div className="flex items-center gap-4 text-ink-soft">
               <HelpCircle size={20} />
               <div className="relative">

@@ -8,7 +8,7 @@ import { QuestionList } from "@/components/QuestionList";
 import { AnswerSheetViewer } from "@/components/AnswerSheetViewer";
 import { GradingSummary } from "@/components/GradingSummary";
 import { filesToPageImages } from "@/lib/pdf";
-import { formatQuestionLabel, mapAnswersToQuestions, normalizeNumber } from "@/lib/mapping";
+import { mapAnswersToQuestions } from "@/lib/mapping";
 import type {
   ExtractedAnswerBlock,
   ExtractedQuestion,
@@ -168,21 +168,8 @@ export default function Home() {
 
   const showWorkspace = stage === "done";
 
-  function handleAnswerClick(answer: ExtractedAnswerBlock) {
-    if (!answer.matchedNumber) return;
-    const norm = normalizeNumber(answer.matchedNumber);
-    const q = questions.find((q) => normalizeNumber(q.number) === norm);
-    if (q) {
-      setSelectedQuestionId(q.id);
-      setMobileTab("questions");
-    }
-  }
-
   return (
-    <AppShell
-      sidebarExpanded={!showWorkspace && !isProcessing}
-      onBack={reset}
-    >
+    <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
         <div className="flex-1 overflow-auto flex items-start justify-center px-6 py-14">
           <div className="w-full max-w-2xl text-center">
@@ -340,9 +327,8 @@ export default function Home() {
                   pages={answerPages}
                   answers={answers}
                   highlightedAnswerIds={highlightedAnswerIds}
-                  highlightedLabel={selectedQuestion ? formatQuestionLabel(selectedQuestion.number) : null}
+                  highlightedLabel={selectedQuestion ? `Q${selectedQuestion.number}` : null}
                   jumpToPage={jumpToPage}
-                  onAnswerClick={handleAnswerClick}
                 />
               </div>
             </section>

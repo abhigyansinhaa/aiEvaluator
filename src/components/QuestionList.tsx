@@ -74,19 +74,19 @@ export function QuestionList({
         return (
           <div
             key={q.id}
-            style={{ borderLeftColor: accentColor(mapping, grade), borderLeftWidth: 4 }}
+            style={selected ? undefined : { borderLeftColor: accentColor(mapping, grade), borderLeftWidth: 4 }}
             className={`rounded-2xl border bg-surface transition-colors ${
               selected ? "border-orange ring-2 ring-orange/20" : "border-line"
             }`}
           >
             <button onClick={() => onSelect(q.id)} className="w-full text-left px-4 py-3.5">
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 w-7 h-7 rounded-full bg-ink text-white text-xs font-semibold flex items-center justify-center shrink-0">
+                <span className="mt-0.5 w-8 h-8 rounded-full bg-ink text-white text-xs font-semibold flex items-center justify-center shrink-0">
                   {main}
                 </span>
-                {sub && <span className="mt-1 text-sm text-ink-soft font-medium shrink-0">{sub}</span>}
-                <p className="flex-1 text-sm text-ink leading-snug pt-0.5">{q.text}</p>
-                <div className="flex items-center gap-2 shrink-0">
+                {sub && <span className="mt-1.5 text-sm text-ink-soft font-medium shrink-0">{sub}</span>}
+                <p className="flex-1 text-sm text-ink leading-snug pt-1.5">{q.text}</p>
+                <div className="flex items-center gap-2 shrink-0 pt-0.5">
                   {grade ? (
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${marksTone(grade.marksAwarded, grade.maxMarks)}`}>
                       {grade.marksAwarded}/{grade.maxMarks}
@@ -107,11 +107,14 @@ export function QuestionList({
 
             {expanded && (
               <div className="px-4 pb-4 space-y-2.5">
-                {answerTexts.length > 0 ? (
-                  <div className="rounded-xl bg-surface-muted border border-line px-3.5 py-2.5">
-                    <p className="text-[11px] font-semibold text-ink-faint uppercase tracking-wide mb-1">
-                      Transcribed answer
-                    </p>
+                {grade ? (
+                  <div className="rounded-xl bg-surface-muted px-3.5 py-3">
+                    <p className="text-sm font-bold text-ink mb-1">AI Feedback</p>
+                    <p className="text-sm text-ink-soft">{grade.feedback}</p>
+                  </div>
+                ) : answerTexts.length > 0 ? (
+                  <div className="rounded-xl bg-surface-muted px-3.5 py-3">
+                    <p className="text-sm font-bold text-ink mb-1">Transcribed answer</p>
                     {answerTexts.map((t, i) => (
                       <p key={i} className="text-sm text-ink-soft mb-1 last:mb-0">
                         {t}
@@ -120,14 +123,6 @@ export function QuestionList({
                   </div>
                 ) : (
                   <p className="text-sm text-ink-faint italic">No matching answer found on the sheet.</p>
-                )}
-                {grade && (
-                  <div className="rounded-xl bg-surface-muted border border-line px-3.5 py-2.5">
-                    <p className="text-[11px] font-semibold text-ink-faint uppercase tracking-wide mb-1">
-                      AI Feedback
-                    </p>
-                    <p className="text-sm text-ink-soft">{grade.feedback}</p>
-                  </div>
                 )}
               </div>
             )}
