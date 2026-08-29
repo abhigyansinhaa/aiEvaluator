@@ -181,21 +181,21 @@ export default function Home() {
   return (
     <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
-        <div className="flex-1 overflow-auto flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10 relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_18%,#EFF2F6_50%,#D1D6DF_100%)]">
-          <div className="w-full max-w-[680px] text-center py-4">
-            <h1 className="text-3xl sm:text-[40px] sm:leading-tight font-bold font-display tracking-tight text-ink">
+        <div className="flex-1 overflow-auto flex items-center justify-center px-3 py-6 sm:px-6 sm:py-10 relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_18%,#EFF2F6_50%,#D1D6DF_100%)]">
+          <div className="w-full max-w-[680px] text-center py-2 sm:py-4">
+            <h1 className="text-2xl sm:text-3xl md:text-[40px] md:leading-tight font-bold font-display tracking-tight text-ink">
               Upload{" "}
-              <span className="bg-orange-soft text-orange px-2.5 py-1 rounded-lg text-3xl sm:text-[40px]">
+              <span className="bg-orange-soft text-orange px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-2xl sm:text-3xl md:text-[40px]">
                 Question Paper &amp; Answer Sheets
               </span>
             </h1>
-            <p className="text-ink-soft mt-4 text-sm sm:text-[15px]">Upload both files to get started</p>
+            <p className="text-ink-soft mt-3 sm:mt-4 text-sm sm:text-[15px]">Upload both files to get started</p>
 
-            <div className="w-20 h-20 rounded-full bg-orange-soft border-4 border-orange/10 mx-auto my-8 flex items-center justify-center">
-              <Sparkles className="text-orange" size={28} />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-orange-soft border-4 border-orange/10 mx-auto my-6 sm:my-8 flex items-center justify-center">
+              <Sparkles className="text-orange" size={24} />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-left">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 text-left">
               <UploadZone
                 label="Question paper"
                 accentLabel="Question Paper"
@@ -215,11 +215,11 @@ export default function Home() {
             <button
               onClick={handleProcess}
               disabled={!canProcess}
-              className="mt-8 inline-flex items-center gap-2 font-semibold text-sm px-8 py-3 rounded-full bg-ink text-white hover:bg-ink/85 disabled:bg-[#8e939b] disabled:text-white/90 disabled:opacity-100 disabled:cursor-not-allowed transition-all shadow-sm"
+              className="mt-6 sm:mt-8 inline-flex items-center gap-2 font-semibold text-sm px-6 py-2.5 sm:px-8 sm:py-3 rounded-full bg-ink text-white hover:bg-ink/85 disabled:bg-[#8e939b] disabled:text-white/90 disabled:opacity-100 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               Start Mapping →
             </button>
-            <p className="text-xs text-ink-soft mt-3 font-normal">
+            <p className="text-[11px] sm:text-xs text-ink-soft mt-2.5 sm:mt-3 font-normal px-4 sm:px-0">
               Once both files are uploaded, you&apos;ll be able to map answers with questions
             </p>
 
@@ -233,26 +233,26 @@ export default function Home() {
       )}
 
       {isProcessing && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-4">
-          <Sparkles className="text-orange animate-pulse" size={56} strokeWidth={1.5} />
-          <p className="text-xl font-bold text-ink">Extracting…</p>
-          <p className="text-sm text-ink-faint">{STAGE_LABEL[stage]}</p>
+        <div className="flex-1 flex flex-col items-center justify-center gap-3 sm:gap-4 px-4">
+          <Sparkles className="text-orange animate-pulse" size={40} strokeWidth={1.5} />
+          <p className="text-lg sm:text-xl font-bold text-ink">Extracting…</p>
+          <p className="text-xs sm:text-sm text-ink-faint text-center">{STAGE_LABEL[stage]}</p>
         </div>
       )}
 
       {showWorkspace && (
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="flex items-center justify-end gap-3 border-b border-line bg-surface px-6 py-2.5 shrink-0">
+          <div className="flex items-center justify-end gap-2 sm:gap-3 border-b border-line bg-surface px-3 sm:px-6 py-2 sm:py-2.5 shrink-0">
             <button
               onClick={handleGradeAll}
               disabled={grading}
-              className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-orange text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="text-xs font-semibold px-3 sm:px-3.5 py-1.5 rounded-full bg-orange text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               {grading ? "Grading…" : "Grade all"}
             </button>
             <button
               onClick={reset}
-              className="text-xs font-semibold px-3.5 py-1.5 rounded-full border border-line text-ink-soft hover:bg-surface-muted transition-colors"
+              className="text-xs font-semibold px-3 sm:px-3.5 py-1.5 rounded-full border border-line text-ink-soft hover:bg-surface-muted transition-colors"
             >
               Start over
             </button>
@@ -284,13 +284,13 @@ export default function Home() {
               className={`w-full sm:w-[44%] border-r border-line flex-col overflow-hidden ${mobileTab === "questions" ? "flex" : "hidden sm:flex"
                 }`}
             >
-              <div className="px-5 py-3 border-b border-line bg-surface flex items-center justify-between shrink-0">
-                <p className="text-sm font-semibold text-ink">Extracted Questions (from question paper)</p>
+              <div className="px-3 sm:px-5 py-2.5 sm:py-3 border-b border-line bg-surface flex items-center justify-between shrink-0 gap-2">
+                <p className="text-xs sm:text-sm font-semibold text-ink truncate">Extracted Questions</p>
                 <button
                   onClick={() => setExpandAll((v) => !v)}
-                  className="text-xs font-medium text-ink-soft hover:text-ink shrink-0"
+                  className="text-[11px] sm:text-xs font-medium text-ink-soft hover:text-ink shrink-0"
                 >
-                  {expandAll ? "Collapse All" : "Expand All"}
+                  {expandAll ? "Collapse" : "Expand"}
                 </button>
               </div>
               <div className="flex-1 overflow-auto p-4 bg-bg">

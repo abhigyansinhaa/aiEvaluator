@@ -33,7 +33,7 @@ export function GradingSummary({ studentName, onStudentNameChange, grades, total
   }
 
   return (
-    <div className={`mx-4 mt-4 rounded-2xl border ${tone.border} ${tone.bg} px-4 py-3.5 flex items-center justify-between gap-4`}>
+    <div className={`mx-3 sm:mx-4 mt-3 sm:mt-4 rounded-2xl border ${tone.border} ${tone.bg} px-3 sm:px-4 py-3 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-4`}>
       <div className="min-w-0">
         {editing ? (
           <div className="flex items-center gap-2">
@@ -43,7 +43,7 @@ export function GradingSummary({ studentName, onStudentNameChange, grades, total
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && commit()}
               placeholder="Student name"
-              className="text-sm font-semibold bg-white border border-line rounded-md px-2 py-1 text-ink outline-none focus:border-orange"
+              className="text-xs sm:text-sm font-semibold bg-white border border-line rounded-md px-2 py-1 text-ink outline-none focus:border-orange w-full max-w-[180px] sm:max-w-none"
             />
             <button onClick={commit} aria-label="Save name" className="text-ink-soft hover:text-ink">
               <Check size={16} />
@@ -55,22 +55,22 @@ export function GradingSummary({ studentName, onStudentNameChange, grades, total
               setDraft(studentName ?? "");
               setEditing(true);
             }}
-            className="flex items-center gap-1.5 text-sm font-semibold text-ink group"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-ink group"
           >
-            <span className="truncate">{studentName || "Add student name"}</span>
+            <span className="truncate max-w-[140px] sm:max-w-none">{studentName || "Add student name"}</span>
             <Pencil size={12} className="text-ink-faint group-hover:text-ink-soft shrink-0" />
           </button>
         )}
-        <p className="text-xs text-ink-soft mt-0.5">
+        <p className="text-[11px] sm:text-xs text-ink-soft mt-0.5">
           {gradedCount} of {totalQuestions} question{totalQuestions === 1 ? "" : "s"} graded
         </p>
       </div>
 
       <div className="text-right shrink-0">
-        <p className={`text-xl font-bold ${tone.text}`}>
+        <p className={`text-lg sm:text-xl font-bold ${tone.text}`}>
           {totalAwarded}/{totalMax}
         </p>
-        <p className="text-xs text-ink-soft">{pct}%</p>
+        <p className="text-[11px] sm:text-xs text-ink-soft">{pct}%</p>
       </div>
     </div>
   );

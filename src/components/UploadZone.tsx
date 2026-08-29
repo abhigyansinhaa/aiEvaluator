@@ -63,7 +63,7 @@ export function UploadZone({ label, accentLabel, files, onChange, disabled }: Up
         if (!disabled) addFiles(e.dataTransfer.files);
       }}
       onClick={() => !disabled && files.length === 0 && inputRef.current?.click()}
-      className={`rounded-2xl border-2 border-dashed px-6 py-10 transition-colors ${
+      className={`rounded-2xl border-2 border-dashed px-4 py-8 sm:px-6 sm:py-10 transition-colors ${
         disabled
           ? "opacity-50 border-line"
           : dragging
@@ -88,10 +88,11 @@ export function UploadZone({ label, accentLabel, files, onChange, disabled }: Up
 
       {files.length === 0 ? (
         <div className="text-center">
-          <div className="w-11 h-11 mx-auto rounded-xl bg-surface-muted border border-line flex items-center justify-center mb-4">
-            <Upload size={18} className="text-ink-soft" />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 mx-auto rounded-xl bg-surface-muted border border-line flex items-center justify-center mb-3 sm:mb-4">
+            <Upload size={16} className="text-ink-soft sm:hidden" />
+            <Upload size={18} className="text-ink-soft hidden sm:block" />
           </div>
-          <p className="text-[15px] text-ink">
+          <p className="text-sm sm:text-[15px] text-ink">
             Upload <span className="text-orange font-semibold underline underline-offset-2">{accentLabel}</span>
           </p>
           <p className="text-xs text-ink-faint mt-1">Max 10MB</p>
@@ -104,14 +105,14 @@ export function UploadZone({ label, accentLabel, files, onChange, disabled }: Up
             return (
               <div
                 key={`${f.name}-${i}`}
-                className="relative flex items-center gap-3.5 rounded-xl bg-white border border-line/60 px-4 py-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] w-full"
+                className="relative flex items-center gap-3 sm:gap-3.5 rounded-xl bg-white border border-line/60 px-3 py-3 sm:px-4 sm:py-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] w-full"
               >
                 {/* PDF icon badge */}
-                <div className="w-10 h-10 rounded-lg bg-red-soft border border-red-border flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-bold text-red leading-none tracking-tight">PDF</span>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-red-soft border border-red-border flex items-center justify-center shrink-0">
+                  <span className="text-[9px] sm:text-[10px] font-bold text-red leading-none tracking-tight">PDF</span>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-ink truncate">{f.name}</p>
+                  <p className="text-xs sm:text-sm font-bold text-ink truncate">{f.name}</p>
                   <p className="text-xs text-ink-faint mt-0.5">
                     {formatSize(f.size)}
                     {pages != null && <> &nbsp;•&nbsp; {pages} {pages === 1 ? "Page" : "Pages"}</>}

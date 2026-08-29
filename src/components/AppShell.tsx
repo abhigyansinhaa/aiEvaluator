@@ -147,7 +147,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
       {mobileNavOpen && (
         <div className="sm:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileNavOpen(false)} />
-          <div className="relative w-[78%] max-w-70 bg-surface flex flex-col h-full shadow-xl rounded-r-2xl">
+          <div className="relative w-[78%] max-w-[280px] bg-surface flex flex-col h-full shadow-xl rounded-r-2xl">
             <div className="flex items-center justify-between px-4 py-4 border-b border-line">
               <div className="flex items-center gap-2">
                 <BrandMark />
@@ -201,27 +201,30 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
         {/* Main content column */}
         <div className="flex-1 flex flex-col min-w-0 min-h-0 gap-2">
           {/* Desktop/tablet header — floating rounded panel */}
-          <header className="hidden sm:flex items-center justify-between bg-surface rounded-2xl shadow-sm px-6 py-3.5 shrink-0">
-            <div className="flex items-center gap-2.5 text-ink-soft">
+          <header className="hidden sm:flex items-center justify-between bg-surface rounded-2xl shadow-sm px-4 md:px-6 py-3 md:py-3.5 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-2.5 text-ink-soft">
               <button
                 onClick={onBack}
-                className="flex items-center gap-2.5 text-ink-soft hover:text-ink transition-colors"
+                className="flex items-center gap-2 sm:gap-2.5 text-ink-soft hover:text-ink transition-colors"
               >
                 <ArrowLeft size={18} />
                 <FileText size={16} className="text-ink-faint" />
                 <span className="text-sm font-medium">Exams</span>
               </button>
             </div>
-            <div className="flex items-center gap-4 text-ink-soft">
-              <HelpCircle size={20} />
+            <div className="flex items-center gap-3 md:gap-4 text-ink-soft">
+              <HelpCircle size={18} className="sm:hidden" />
+              <HelpCircle size={20} className="hidden sm:block" />
               <div className="relative">
-                <Bell size={20} />
+                <Bell size={18} className="sm:hidden" />
+                <Bell size={20} className="hidden sm:block" />
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-orange" />
               </div>
-              <Sparkles size={20} />
+              <Sparkles size={18} className="sm:hidden" />
+              <Sparkles size={20} className="hidden sm:block" />
               <div className="flex items-center gap-2 pl-2 border-l border-line">
-                <div className="w-8 h-8 rounded-full bg-orange-soft border border-orange/30" />
-                <span className="text-sm font-medium text-ink">Madhur Rastogi</span>
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-orange-soft border border-orange/30" />
+                <span className="text-sm font-medium text-ink hidden md:inline">Madhur Rastogi</span>
                 <ChevronDown size={16} />
               </div>
             </div>
