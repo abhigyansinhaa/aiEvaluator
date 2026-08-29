@@ -181,15 +181,15 @@ export default function Home() {
   return (
     <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
-        <div className="flex-1 overflow-auto flex items-start justify-center px-4 py-8 sm:px-6 sm:py-14 relative">
-          <div className="w-full max-w-2xl text-center">
-            <h1 className="text-2xl sm:text-3xl font-bold text-ink">
+        <div className="flex-1 overflow-auto flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10 relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_18%,#EFF2F6_50%,#D1D6DF_100%)]">
+          <div className="w-full max-w-2xl text-center py-4">
+            <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-ink">
               Upload{" "}
               <span className="bg-orange-soft text-orange px-2 py-0.5 rounded-md">
                 Question Paper &amp; Answer Sheets
               </span>
             </h1>
-            <p className="text-ink-soft mt-3">Upload both files to get started</p>
+            <p className="text-ink-soft mt-3 text-sm">Upload both files to get started</p>
 
             <div className="w-20 h-20 rounded-full bg-orange-soft border-4 border-orange/10 mx-auto my-8 flex items-center justify-center">
               <Sparkles className="text-orange" size={28} />
@@ -215,11 +215,11 @@ export default function Home() {
             <button
               onClick={handleProcess}
               disabled={!canProcess}
-              className="mt-8 inline-flex items-center gap-2 font-semibold text-sm px-6 py-3 rounded-full bg-ink text-white hover:bg-ink/85 disabled:opacity-35 disabled:cursor-not-allowed transition-colors"
+              className="mt-8 inline-flex items-center gap-2 font-semibold text-sm px-8 py-3 rounded-full bg-ink text-white hover:bg-ink/85 disabled:bg-[#8e939b] disabled:text-white/90 disabled:opacity-100 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               Start Mapping →
             </button>
-            <p className="text-xs text-ink-faint mt-3">
+            <p className="text-xs text-ink-soft mt-3 font-normal">
               Once both files are uploaded, you&apos;ll be able to map answers with questions
             </p>
 
@@ -229,9 +229,6 @@ export default function Home() {
               </p>
             )}
           </div>
-
-          {/* Bottom gradient fade — matches Figma greyed-out footer */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-bg via-(--bg)/60 to-transparent rounded-b-2xl" />
         </div>
       )}
 

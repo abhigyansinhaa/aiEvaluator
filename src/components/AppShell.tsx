@@ -1,4 +1,7 @@
+"use client";
+
 import { useState } from "react";
+import Image from "next/image";
 import {
   ArrowLeft,
   Bell,
@@ -29,13 +32,17 @@ const NAV_ITEMS = [
   { icon: Library, label: "My Library" },
 ];
 
-function BrandMark() {
+function BrandMark({ className = "w-8 h-8" }: { className?: string }) {
   return (
-    <div className="w-8 h-8 rounded-lg bg-linear-to-br from-orange to-red flex items-center justify-center shrink-0 shadow-sm">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2L4 8V22H9V14H15V22H20V8L12 2Z" fill="white" fillOpacity="0.95" />
-        <path d="M10 10H14V12H10V10Z" fill="white" fillOpacity="0.6" />
-      </svg>
+    <div className={`relative ${className} rounded-lg overflow-hidden shrink-0 shadow-sm border border-line/40`}>
+      <Image
+        src="/veda-logo.png"
+        alt="VedaAI Logo"
+        fill
+        sizes="32px"
+        className="object-cover"
+        priority
+      />
     </div>
   );
 }
@@ -101,7 +108,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
             <ArrowLeft size={18} />
           </button>
           <BrandMark />
-          <span className="font-bold text-ink">VedaAI</span>
+          <span className="font-display font-bold text-ink tracking-tight text-base">VedaAI</span>
         </div>
         <div className="flex items-center gap-3.5 text-ink-soft">
           <div className="relative">
@@ -123,7 +130,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
             <div className="flex items-center justify-between px-4 py-4 border-b border-line">
               <div className="flex items-center gap-2">
                 <BrandMark />
-                <span className="font-bold text-lg text-ink">VedaAI</span>
+                <span className="font-display font-bold text-lg text-ink tracking-tight">VedaAI</span>
               </div>
               <button onClick={() => setMobileNavOpen(false)} aria-label="Close menu">
                 <X size={20} className="text-ink-soft" />
@@ -147,9 +154,9 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
             sidebarExpanded ? "w-[256px]" : "w-17"
           }`}
         >
-          <div className={`flex items-center gap-2 px-4 py-5 ${sidebarExpanded ? "" : "justify-center px-0"}`}>
+          <div className={`flex items-center gap-2.5 px-4 py-5 ${sidebarExpanded ? "" : "justify-center px-0"}`}>
             <BrandMark />
-            {sidebarExpanded && <span className="font-bold text-lg text-ink">VedaAI</span>}
+            {sidebarExpanded && <span className="font-display font-bold text-lg text-ink tracking-tight">VedaAI</span>}
           </div>
 
           <div className={`px-4 mb-4 ${sidebarExpanded ? "" : "px-2 flex justify-center"}`}>

@@ -1,34 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f0efec;
+  --bg: #f8f8f7;
   --surface: #ffffff;
-  --surface-muted: #f7f6f3;
-  --ink: #17171a;
-  --ink-soft: #6b7075;
-  --ink-faint: #9a9ea3;
-  --line: #e7e5e0;
-  --line-soft: #f0eee9;
+  --surface-muted: #f3f3f2;
+  --ink: #111215;
+  --ink-soft: #63666d;
+  --ink-faint: #9699a0;
+  --line: #e5e4e0;
+  --line-soft: #efeee9;
 
-  --orange: #ea4e1f;
-  --orange-soft: #fdece3;
-  --orange-ring: #f0532a55;
+  --orange: #ff5500;
+  --orange-soft: #fff1eb;
+  --orange-ring: #ff550055;
 
-  --green: #2f9e4f;
-  --green-soft: #e9f7ec;
-  --green-border: #a9dfb6;
+  --green: #238b45;
+  --green-soft: #e8f7ec;
+  --green-border: #a3deb0;
 
-  --amber: #c9791a;
-  --amber-soft: #fdf1de;
-  --amber-border: #eecf9c;
+  --amber: #c57616;
+  --amber-soft: #fcf1df;
+  --amber-border: #ebd09e;
 
-  --red: #d33a2f;
+  --red: #d93829;
   --red-soft: #fdeae8;
-  --red-border: #f3bcb6;
+  --red-border: #f5bdb7;
 
-  --blue: #2563a8;
-  --blue-soft: #e8f1fb;
-  --blue-border: #b6d3f0;
+  --blue: #2365b5;
+  --blue-soft: #eaf1fa;
+  --blue-border: #b8d4f2;
 }
 
 @theme inline {
@@ -61,6 +61,7 @@
   --color-blue-border: var(--blue-border);
 
   --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
 }
 
 body {
