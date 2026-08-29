@@ -6,6 +6,8 @@ import {
   ArrowLeft,
   Bell,
   ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
   Copy,
   FileText,
   Files,
@@ -21,7 +23,7 @@ import {
 } from "lucide-react";
 
 interface AppShellProps {
-  sidebarExpanded: boolean;
+  sidebarExpanded?: boolean;
   onBack?: () => void;
   children: React.ReactNode;
 }
@@ -52,9 +54,10 @@ function BrandMark({ className = "w-8 h-8" }: { className?: string }) {
 function ToolkitPill({ compact }: { compact: boolean }) {
   return (
     <div
-      className={`flex items-center gap-2 rounded-full border-2 border-orange bg-ink text-white ${
-        compact ? "p-2" : "px-4 py-2"
+      className={`flex items-center gap-2 rounded-full border-2 border-orange bg-ink text-white transition-all ${
+        compact ? "w-10 h-10 justify-center p-0" : "px-4 py-2"
       }`}
+      title="AI Teacher's Toolkit"
     >
       <Sparkles size={16} className="text-orange shrink-0" />
       {!compact && <span className="text-xs font-semibold whitespace-nowrap">AI Teacher&apos;s Toolkit</span>}
@@ -64,7 +67,7 @@ function ToolkitPill({ compact }: { compact: boolean }) {
 
 function SchoolBadge({ compact }: { compact: boolean }) {
   return (
-    <div className={`flex items-center gap-2.5 rounded-xl border border-line bg-surface-muted ${compact ? "p-2" : "px-3 py-2.5"}`}>
+    <div className={`flex items-center gap-2.5 rounded-xl border border-line bg-surface-muted transition-all ${compact ? "p-1.5 justify-center" : "px-3 py-2.5"}`}>
       <div className="w-8 h-8 rounded-md bg-green-soft border border-green-border flex items-center justify-center shrink-0">
         <School size={16} className="text-green" />
       </div>
@@ -80,12 +83,12 @@ function SchoolBadge({ compact }: { compact: boolean }) {
 
 function NavList({ expanded, onNavigate }: { expanded: boolean; onNavigate?: () => void }) {
   return (
-    <nav className="flex-1 px-3 space-y-0.5">
+    <nav className="flex-1 px-2.5 space-y-0.5">
       {NAV_ITEMS.map(({ icon: Icon, label, active }) => (
         <button
           key={label}
           onClick={onNavigate}
-          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left relative ${
+          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left relative transition-colors ${
             active ? "text-ink font-semibold" : "text-ink-soft hover:text-ink hover:bg-surface-muted"
           } ${expanded ? "" : "justify-center px-0"}`}
           title={expanded ? undefined : label}
@@ -117,8 +120,9 @@ function NavList({ expanded, onNavigate }: { expanded: boolean; onNavigate?: () 
   );
 }
 
-export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
+export function AppShell({ sidebarExpanded = false, onBack, children }: AppShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(sidebarExpanded);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-bg">
@@ -172,29 +176,40 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
         {/* Desktop/tablet sidebar — floating rounded panel */}
         <aside
           className={`hidden sm:flex shrink-0 flex-col bg-surface rounded-2xl shadow-sm transition-all duration-300 ${
-            sidebarExpanded ? "w-[256px]" : "w-17"
+            isExpanded ? "w-64" : "w-17"
           }`}
         >
-          <div className={`flex items-center gap-2.5 px-4 py-5 ${sidebarExpanded ? "justify-between" : "justify-center px-0"}`}>
+          <div className={`flex items-center gap-2.5 px-4 py-5 ${isExpanded ? "justify-between" : "justify-center px-0"}`}>
             <div className="flex items-center gap-2.5">
               <BrandMark />
-              {sidebarExpanded && <span className="font-display font-bold text-lg text-ink tracking-tight">VedaAI</span>}
+              {isExpanded && <span className="font-display font-bold text-lg text-ink tracking-tight">VedaAI</span>}
             </div>
-            {sidebarExpanded && (
-              <button className="text-ink-soft hover:text-ink transition-colors" aria-label="Collapse sidebar">
+            {isExpanded && (
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="text-ink-soft hover:text-ink transition-colors"
+                aria-label="Collapse sidebar"
+              >
                 <Copy size={16} />
               </button>
             )}
           </div>
 
-          <div className={`px-4 mb-4 ${sidebarExpanded ? "" : "px-2 flex justify-center"}`}>
-            <ToolkitPill compact={!sidebarExpanded} />
+          <div className={`mb-4 flex justify-center ${isExpanded ? "px-4" : "px-2"}`}>
+            <ToolkitPill compact={!isExpanded} />
           </div>
 
-          <NavList expanded={sidebarExpanded} />
+          <NavList expanded={isExpanded} />
 
-          <div className={`px-3 pb-4 ${sidebarExpanded ? "" : "px-2 flex justify-center"}`}>
-            <SchoolBadge compact={!sidebarExpanded} />
+          <div className={`px-2.5 pb-2 flex flex-col items-center gap-2`}>
+            <SchoolBadge compact={!isExpanded} />
+            <button
+              onClick={() => setIsExpanded((v) => !v)}
+              aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+              className="w-full py-1.5 flex items-center justify-center text-ink-soft hover:text-ink hover:bg-surface-muted rounded-lg transition-colors"
+            >
+              {isExpanded ? <ChevronsLeft size={16} /> : <ChevronsRight size={16} />}
+            </button>
           </div>
         </aside>
 

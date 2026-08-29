@@ -61,20 +61,24 @@ export function QuestionList({
         return (
           <div
             key={q.id}
-            className={`rounded-2xl border bg-surface transition-colors ${
-              selected ? "border-orange ring-2 ring-orange/20" : "border-line"
+            className={`rounded-2xl border bg-surface transition-all ${
+              selected ? "border-2 border-orange shadow-sm" : "border-line/80 hover:border-line"
             }`}
           >
             <button onClick={() => onSelect(q.id)} className="w-full text-left px-4 py-3.5">
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 w-8 h-8 rounded-full bg-ink text-white text-xs font-semibold flex items-center justify-center shrink-0">
+                <span
+                  className={`mt-0.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full text-white text-xs font-bold flex items-center justify-center shrink-0 transition-colors ${
+                    selected ? "bg-orange" : "bg-ink"
+                  }`}
+                >
                   {main}
                 </span>
-                {sub && <span className="mt-1.5 text-sm text-ink-soft font-medium shrink-0">{sub}</span>}
-                <p className="flex-1 text-sm text-ink leading-snug pt-1.5">{q.text}</p>
+                {sub && <span className="mt-1.5 text-sm text-ink-soft font-semibold shrink-0">{sub}</span>}
+                <p className="flex-1 text-sm text-ink font-medium leading-snug pt-1">{q.text}</p>
                 <div className="flex items-center gap-2 shrink-0 pt-0.5">
                   {grade ? (
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${marksTone(grade.marksAwarded, grade.maxMarks)}`}>
+                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${marksTone(grade.marksAwarded, grade.maxMarks)}`}>
                       {grade.marksAwarded}/{grade.maxMarks}
                     </span>
                   ) : (
@@ -94,21 +98,21 @@ export function QuestionList({
             {expanded && (
               <div className="px-4 pb-4 space-y-2.5">
                 {grade ? (
-                  <div className="rounded-xl bg-surface-muted px-3.5 py-3">
-                    <p className="text-sm font-bold text-ink mb-1">AI Feedback</p>
-                    <p className="text-sm text-ink-soft">{grade.feedback}</p>
+                  <div className="rounded-xl bg-surface-muted/70 px-3.5 py-3 border border-line/40">
+                    <p className="text-xs font-bold text-ink mb-1">AI Feedback</p>
+                    <p className="text-xs sm:text-sm text-ink-soft leading-relaxed">{grade.feedback}</p>
                   </div>
                 ) : answerTexts.length > 0 ? (
-                  <div className="rounded-xl bg-surface-muted px-3.5 py-3">
-                    <p className="text-sm font-bold text-ink mb-1">Transcribed answer</p>
+                  <div className="rounded-xl bg-surface-muted/70 px-3.5 py-3 border border-line/40">
+                    <p className="text-xs font-bold text-ink mb-1">Transcribed answer</p>
                     {answerTexts.map((t, i) => (
-                      <p key={i} className="text-sm text-ink-soft mb-1 last:mb-0">
+                      <p key={i} className="text-xs sm:text-sm text-ink-soft mb-1 last:mb-0 leading-relaxed">
                         {t}
                       </p>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-ink-faint italic">No matching answer found on the sheet.</p>
+                  <p className="text-xs sm:text-sm text-ink-faint italic pl-1">No matching answer found on the sheet.</p>
                 )}
               </div>
             )}

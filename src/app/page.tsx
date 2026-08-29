@@ -181,8 +181,8 @@ export default function Home() {
   return (
     <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
-        <div className="flex-1 overflow-auto flex items-center justify-center px-3 py-6 sm:px-6 sm:py-10 relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_18%,#EFF2F6_50%,#D1D6DF_100%)]">
-          <div className="w-full max-w-170 text-center py-2 sm:py-4">
+        <div className="flex-1 overflow-auto flex justify-center px-3 py-6 sm:px-6 sm:py-10 relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_18%,#EFF2F6_50%,#D1D6DF_100%)]">
+          <div className="w-full max-w-170 text-center py-2 sm:py-4 m-auto">
             <h1 className="text-2xl sm:text-3xl md:text-[40px] md:leading-tight font-bold font-display tracking-tight text-ink">
               Upload{" "}
               <span className="bg-orange-soft text-orange px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-2xl sm:text-3xl md:text-[40px]">
@@ -233,10 +233,41 @@ export default function Home() {
       )}
 
       {isProcessing && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-3 sm:gap-4 px-4">
-          <Sparkles className="text-orange animate-pulse" size={40} strokeWidth={1.5} />
-          <p className="text-lg sm:text-xl font-bold text-ink">Extracting…</p>
-          <p className="text-xs sm:text-sm text-ink-faint text-center">{STAGE_LABEL[stage]}</p>
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 px-4 bg-surface">
+          {/* Multi-star cluster matching Figma loading state */}
+          <div className="relative w-24 h-24 flex items-center justify-center">
+            {/* Center large 4-point star */}
+            <svg
+              className="w-16 h-16 text-[#ff5500] animate-pulse drop-shadow-[0_4px_16px_rgba(255,85,0,0.35)]"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z" />
+            </svg>
+            {/* Small star left-bottom */}
+            <svg
+              className="absolute bottom-2 left-1 w-6 h-6 text-[#ff7733] animate-pulse"
+              style={{ animationDelay: "200ms" }}
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z" />
+            </svg>
+            {/* Tiny star top-right */}
+            <svg
+              className="absolute top-2 right-2 w-4 h-4 text-[#ffa07a] animate-pulse"
+              style={{ animationDelay: "400ms" }}
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 0C12 6.627 6.627 12 0 12C6.627 12 12 17.373 12 24C12 17.373 17.373 12 24 12C17.373 12 12 6.627 12 0Z" />
+            </svg>
+            {/* Glowing dots */}
+            <span className="absolute top-6 left-3 w-1.5 h-1.5 rounded-full bg-[#ff7733]" />
+            <span className="absolute bottom-5 right-3 w-1.5 h-1.5 rounded-full bg-[#ff5500]" />
+          </div>
+          <p className="text-2xl font-bold font-display text-ink tracking-tight">Extracting…</p>
+          <p className="text-sm text-ink-soft text-center font-normal">This may take a while</p>
         </div>
       )}
 
@@ -284,13 +315,13 @@ export default function Home() {
               className={`w-full sm:w-[44%] border-r border-line flex-col overflow-hidden ${mobileTab === "questions" ? "flex" : "hidden sm:flex"
                 }`}
             >
-              <div className="px-3 sm:px-5 py-2.5 sm:py-3 border-b border-line bg-surface flex items-center justify-between shrink-0 gap-2">
-                <p className="text-xs sm:text-sm font-semibold text-ink truncate">Extracted Questions</p>
+              <div className="px-3 sm:px-5 py-3 border-b border-line bg-surface flex items-center justify-between shrink-0 gap-2">
+                <p className="text-xs sm:text-sm font-bold text-ink truncate">Extracted Questions (from question paper)</p>
                 <button
                   onClick={() => setExpandAll((v) => !v)}
-                  className="text-[11px] sm:text-xs font-medium text-ink-soft hover:text-ink shrink-0"
+                  className="text-xs font-medium text-ink-soft hover:text-ink px-2.5 py-1 rounded-lg border border-line bg-surface hover:bg-surface-muted transition-colors shrink-0 shadow-2xs"
                 >
-                  {expandAll ? "Collapse" : "Expand"}
+                  {expandAll ? "Collapse All" : "Expand All"}
                 </button>
               </div>
               <div className="flex-1 overflow-auto p-4 bg-bg">
@@ -327,9 +358,6 @@ export default function Home() {
             <section
               className={`flex-1 flex-col overflow-hidden ${mobileTab === "sheet" ? "flex" : "hidden sm:flex"}`}
             >
-              <div className="px-5 py-3 border-b border-line bg-surface shrink-0">
-                <p className="text-sm font-semibold text-ink">Answer Sheet</p>
-              </div>
               <div className="flex-1 overflow-hidden">
                 <AnswerSheetViewer
                   pages={answerPages}

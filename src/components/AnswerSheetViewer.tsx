@@ -89,55 +89,59 @@ export function AnswerSheetViewer({
 
   return (
     <div className="flex h-full flex-col bg-bg">
-      {/* Toolbar — zoom and page nav as clearly separated pill groups */}
-      <div className="flex items-center justify-between px-4 py-3 shrink-0">
-        {/* Zoom controls */}
-        <div className="flex items-center gap-0.5 bg-ink rounded-full px-1 py-1">
-          <button
-            onClick={() => setZoom((z) => Math.max(50, z - 10))}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-white/80 hover:bg-white/10 transition-colors"
-            aria-label="Zoom out"
-          >
-            <Minus size={14} />
-          </button>
-          <span className="text-white text-xs font-medium w-11 text-center select-none">{zoom}%</span>
-          <button
-            onClick={() => setZoom((z) => Math.min(200, z + 10))}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-white/80 hover:bg-white/10 transition-colors"
-            aria-label="Zoom in"
-          >
-            <Plus size={14} />
-          </button>
-        </div>
+      {/* Dark top header bar matching Figma screenshot */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-[#18191d] text-white shrink-0 border-b border-white/10">
+        <span className="text-sm font-semibold text-white tracking-tight">Answer Sheet</span>
 
-        {/* Page navigation */}
-        {pages.length > 1 && (
-          <div className="flex items-center gap-0.5 bg-ink rounded-full px-1 py-1">
+        <div className="flex items-center gap-2">
+          {/* Zoom controls */}
+          <div className="flex items-center gap-0.5 bg-[#2a2b30] rounded-full px-1 py-0.5 border border-white/10">
             <button
-              onClick={() => scrollToPage(Math.max(0, activePage - 1))}
-              disabled={activePage === 0}
-              className="w-7 h-7 rounded-full flex items-center justify-center text-white/80 hover:bg-white/10 disabled:opacity-30 transition-colors"
-              aria-label="Previous page"
+              onClick={() => setZoom((z) => Math.max(50, z - 10))}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Zoom out"
             >
-              <ChevronLeft size={15} />
+              <Minus size={13} />
             </button>
-            <span className="text-white text-xs font-medium px-2 select-none whitespace-nowrap">
-              Page {activePage + 1} of {pages.length}
-            </span>
+            <span className="text-white text-xs font-medium w-10 text-center select-none">{zoom}%</span>
             <button
-              onClick={() => scrollToPage(Math.min(pages.length - 1, activePage + 1))}
-              disabled={activePage === pages.length - 1}
-              className="w-7 h-7 rounded-full flex items-center justify-center text-white/80 hover:bg-white/10 disabled:opacity-30 transition-colors"
-              aria-label="Next page"
+              onClick={() => setZoom((z) => Math.min(200, z + 10))}
+              className="w-6 h-6 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Zoom in"
             >
-              <ChevronRight size={15} />
+              <Plus size={13} />
             </button>
           </div>
-        )}
+
+          {/* Page navigation */}
+          {pages.length > 1 && (
+            <div className="flex items-center gap-0.5 bg-[#2a2b30] rounded-full px-1 py-0.5 border border-white/10">
+              <button
+                onClick={() => scrollToPage(Math.max(0, activePage - 1))}
+                disabled={activePage === 0}
+                className="w-6 h-6 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-30 transition-colors"
+                aria-label="Previous page"
+              >
+                <ChevronLeft size={14} />
+              </button>
+              <span className="text-white text-xs font-medium px-1.5 select-none whitespace-nowrap">
+                Page {activePage + 1} of {pages.length}
+              </span>
+              <button
+                onClick={() => scrollToPage(Math.min(pages.length - 1, activePage + 1))}
+                disabled={activePage === pages.length - 1}
+                className="w-6 h-6 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 disabled:opacity-30 transition-colors"
+                aria-label="Next page"
+              >
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Continuous scrollable page canvas */}
-      <div ref={scrollRef} className="flex-1 overflow-auto p-4">
+      <div ref={scrollRef} className="flex-1 overflow-auto p-4 bg-[#eef0f3]">
         <div
           className="mx-auto space-y-4 transition-[width] duration-150"
           style={{ width: `${zoom}%`, maxWidth: `${Math.max(zoom, 100)}%` }}
@@ -149,41 +153,36 @@ export function AnswerSheetViewer({
                 key={pageIdx}
                 ref={(el) => { pageRefs.current[pageIdx] = el; }}
               >
-                {/* Page label */}
-                {pages.length > 1 && (
-                  <p className="text-[11px] text-ink-faint font-medium mb-1.5 pl-1">Page {pageIdx + 1}</p>
-                )}
                 {/* Page image with bounding boxes */}
-                <div className="relative bg-surface shadow-sm border border-line rounded-lg p-2">
+                <div className="relative bg-white shadow-md border border-line/60 rounded-lg overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={pg.dataUrl}
                     alt={`Answer sheet page ${pageIdx + 1}`}
-                    className="block w-full h-auto rounded-sm"
+                    className="block w-full h-auto"
                   />
                   {pageBlocks.map(({ block, bbox: [px0, py0, px1, py1] }) => {
                     const isHighlighted = highlightedAnswerIds.includes(block.id);
                     const isMatched = block.matchedNumber !== null;
-                    const defaultBorder = isMatched ? "1.5px dashed rgba(37,99,168,0.4)" : "1.5px dashed rgba(201,121,26,0.5)";
+                    const defaultBorder = isMatched ? "1.5px dashed rgba(37,99,168,0.35)" : "1.5px dashed rgba(201,121,26,0.45)";
                     return (
                       <div
                         key={block.id}
                         title={block.text}
                         onClick={() => block.matchedNumber !== null && onAnswerClick?.(block)}
-                        className={`absolute rounded-lg transition-all duration-300 ${block.matchedNumber !== null ? "cursor-pointer" : ""}`}
+                        className={`absolute rounded-md transition-all duration-200 ${block.matchedNumber !== null ? "cursor-pointer" : ""}`}
                         style={{
                           left: `${px0 * 100}%`,
                           top: `${py0 * 100}%`,
                           width: `${(px1 - px0) * 100}%`,
                           height: `${(py1 - py0) * 100}%`,
-                          border: isHighlighted ? "2.5px solid var(--green)" : defaultBorder,
-                          background: isHighlighted ? "rgba(47,158,79,0.18)" : "transparent",
-                          boxShadow: isHighlighted ? "0 2px 12px rgba(47,158,79,0.3)" : "none",
+                          border: isHighlighted ? "2px solid #238b45" : defaultBorder,
+                          background: isHighlighted ? "rgba(35,139,69,0.12)" : "transparent",
                         }}
                       >
-                        {isHighlighted && highlightedLabel && (
-                          <span className="absolute -top-3 -left-1 bg-green text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm whitespace-nowrap z-10">
-                            {highlightedLabel}
+                        {isHighlighted && (
+                          <span className="absolute -top-3.5 left-0 bg-[#238b45] text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap z-10">
+                            {highlightedLabel || (block.matchedNumber ? `Q${block.matchedNumber}` : "Answer")}
                           </span>
                         )}
                       </div>
@@ -197,7 +196,7 @@ export function AnswerSheetViewer({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 sm:py-2.5 border-t border-line bg-surface shrink-0 text-[11px] text-ink-soft rounded-b-2xl">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 sm:py-2.5 border-t border-line bg-surface shrink-0 text-[11px] text-ink-soft">
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-sm border border-dashed" style={{ borderColor: "rgba(37,99,168,0.6)" }} />
           Matched answer
@@ -207,7 +206,7 @@ export function AnswerSheetViewer({
           Unmatched / rough work
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-sm bg-green" />
+          <span className="w-2.5 h-2.5 rounded-sm bg-[#238b45]" />
           Selected
         </span>
       </div>
