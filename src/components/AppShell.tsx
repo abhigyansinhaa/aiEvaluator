@@ -6,7 +6,8 @@ import {
   ArrowLeft,
   Bell,
   ChevronDown,
-  Circle,
+  Copy,
+  FileText,
   Files,
   HelpCircle,
   LayoutGrid,
@@ -14,6 +15,7 @@ import {
   Menu,
   Presentation,
   School,
+  Settings,
   Sparkles,
   X,
 } from "lucide-react";
@@ -28,7 +30,7 @@ const NAV_ITEMS = [
   { icon: LayoutGrid, label: "Home" },
   { icon: Presentation, label: "My Classroom" },
   { icon: Files, label: "Assignments" },
-  { icon: Circle, label: "Exams", active: true },
+  { icon: FileText, label: "Exams", active: true },
   { icon: Library, label: "My Library" },
 ];
 
@@ -78,20 +80,39 @@ function SchoolBadge({ compact }: { compact: boolean }) {
 
 function NavList({ expanded, onNavigate }: { expanded: boolean; onNavigate?: () => void }) {
   return (
-    <nav className="flex-1 px-3 space-y-1">
+    <nav className="flex-1 px-3 space-y-0.5">
       {NAV_ITEMS.map(({ icon: Icon, label, active }) => (
         <button
           key={label}
           onClick={onNavigate}
-          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left ${
-            active ? "bg-surface-muted text-ink font-medium" : "text-ink-soft"
+          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left relative ${
+            active ? "text-ink font-semibold" : "text-ink-soft hover:text-ink hover:bg-surface-muted"
           } ${expanded ? "" : "justify-center px-0"}`}
           title={expanded ? undefined : label}
         >
+          {active && (
+            <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-ink ${
+              expanded ? "h-6" : "h-5"
+            }`} />
+          )}
           <Icon size={18} className="shrink-0" />
           {expanded && <span>{label}</span>}
         </button>
       ))}
+
+      {/* Settings item with separator */}
+      <div className="pt-2 mt-2 border-t border-line">
+        <button
+          onClick={onNavigate}
+          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left text-ink-soft hover:text-ink hover:bg-surface-muted ${
+            expanded ? "" : "justify-center px-0"
+          }`}
+          title={expanded ? undefined : "Settings"}
+        >
+          <Settings size={18} className="shrink-0" />
+          {expanded && <span>Settings</span>}
+        </button>
+      </div>
     </nav>
   );
 }
@@ -154,9 +175,16 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
             sidebarExpanded ? "w-[256px]" : "w-17"
           }`}
         >
-          <div className={`flex items-center gap-2.5 px-4 py-5 ${sidebarExpanded ? "" : "justify-center px-0"}`}>
-            <BrandMark />
-            {sidebarExpanded && <span className="font-display font-bold text-lg text-ink tracking-tight">VedaAI</span>}
+          <div className={`flex items-center gap-2.5 px-4 py-5 ${sidebarExpanded ? "justify-between" : "justify-center px-0"}`}>
+            <div className="flex items-center gap-2.5">
+              <BrandMark />
+              {sidebarExpanded && <span className="font-display font-bold text-lg text-ink tracking-tight">VedaAI</span>}
+            </div>
+            {sidebarExpanded && (
+              <button className="text-ink-soft hover:text-ink transition-colors" aria-label="Collapse sidebar">
+                <Copy size={16} />
+              </button>
+            )}
           </div>
 
           <div className={`px-4 mb-4 ${sidebarExpanded ? "" : "px-2 flex justify-center"}`}>
@@ -180,6 +208,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
                 className="flex items-center gap-2.5 text-ink-soft hover:text-ink transition-colors"
               >
                 <ArrowLeft size={18} />
+                <FileText size={16} className="text-ink-faint" />
                 <span className="text-sm font-medium">Exams</span>
               </button>
             </div>

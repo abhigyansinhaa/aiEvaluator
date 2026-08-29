@@ -182,14 +182,14 @@ export default function Home() {
     <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
         <div className="flex-1 overflow-auto flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10 relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_18%,#EFF2F6_50%,#D1D6DF_100%)]">
-          <div className="w-full max-w-2xl text-center py-4">
-            <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-ink">
+          <div className="w-full max-w-[680px] text-center py-4">
+            <h1 className="text-3xl sm:text-[40px] sm:leading-tight font-bold font-display tracking-tight text-ink">
               Upload{" "}
-              <span className="bg-orange-soft text-orange px-2 py-0.5 rounded-md">
+              <span className="bg-orange-soft text-orange px-2.5 py-1 rounded-lg text-3xl sm:text-[40px]">
                 Question Paper &amp; Answer Sheets
               </span>
             </h1>
-            <p className="text-ink-soft mt-3 text-sm">Upload both files to get started</p>
+            <p className="text-ink-soft mt-4 text-sm sm:text-[15px]">Upload both files to get started</p>
 
             <div className="w-20 h-20 rounded-full bg-orange-soft border-4 border-orange/10 mx-auto my-8 flex items-center justify-center">
               <Sparkles className="text-orange" size={28} />

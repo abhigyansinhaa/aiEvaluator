@@ -97,26 +97,25 @@ export function UploadZone({ label, accentLabel, files, onChange, disabled }: Up
           <p className="text-xs text-ink-faint mt-1">Max 10MB</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="flex flex-col items-center gap-3">
           {files.map((f, i) => {
             const key = `${f.name}-${f.size}`;
             const pages = pageCounts.get(key);
             return (
               <div
                 key={`${f.name}-${i}`}
-                className="flex items-center justify-between rounded-xl bg-surface-muted border border-line px-3.5 py-3"
+                className="relative flex items-center gap-3.5 rounded-xl bg-white border border-line/60 px-4 py-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.06)] w-full"
               >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-lg bg-red-soft border border-red-border flex items-center justify-center shrink-0">
-                    <FileText size={16} className="text-red" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-ink truncate">{f.name}</p>
-                    <p className="text-xs text-ink-faint">
-                      {formatSize(f.size)}
-                      {pages != null && <> · {pages} {pages === 1 ? "Page" : "Pages"}</>}
-                    </p>
-                  </div>
+                {/* PDF icon badge */}
+                <div className="w-10 h-10 rounded-lg bg-red-soft border border-red-border flex items-center justify-center shrink-0">
+                  <span className="text-[10px] font-bold text-red leading-none tracking-tight">PDF</span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-ink truncate">{f.name}</p>
+                  <p className="text-xs text-ink-faint mt-0.5">
+                    {formatSize(f.size)}
+                    {pages != null && <> &nbsp;•&nbsp; {pages} {pages === 1 ? "Page" : "Pages"}</>}
+                  </p>
                 </div>
                 {!disabled && (
                   <button
@@ -125,9 +124,9 @@ export function UploadZone({ label, accentLabel, files, onChange, disabled }: Up
                       removeAt(i);
                     }}
                     aria-label={`Remove ${f.name}`}
-                    className="w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center shrink-0 hover:opacity-80"
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-ink text-white flex items-center justify-center shrink-0 hover:opacity-80 shadow-sm"
                   >
-                    <X size={13} />
+                    <X size={12} />
                   </button>
                 )}
               </div>
@@ -136,7 +135,7 @@ export function UploadZone({ label, accentLabel, files, onChange, disabled }: Up
           {!disabled && (
             <button
               onClick={() => inputRef.current?.click()}
-              className="text-xs text-ink-soft hover:text-ink underline underline-offset-2"
+              className="text-xs text-ink-soft hover:text-ink underline underline-offset-2 mt-1"
             >
               Add another file
             </button>
