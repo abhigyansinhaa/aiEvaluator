@@ -43,7 +43,7 @@ export function GradingSummary({ studentName, onStudentNameChange, grades, total
               onChange={(e) => setDraft(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && commit()}
               placeholder="Student name"
-              className="text-xs sm:text-sm font-semibold bg-white border border-line rounded-md px-2 py-1 text-ink outline-none focus:border-orange w-full max-w-[180px] sm:max-w-none"
+              className="text-xs sm:text-sm font-semibold bg-white border border-line rounded-md px-2 py-1 text-ink outline-none focus:border-orange w-full max-w-45 sm:max-w-none"
             />
             <button onClick={commit} aria-label="Save name" className="text-ink-soft hover:text-ink">
               <Check size={16} />
@@ -57,7 +57,7 @@ export function GradingSummary({ studentName, onStudentNameChange, grades, total
             }}
             className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-ink group"
           >
-            <span className="truncate max-w-[140px] sm:max-w-none">{studentName || "Add student name"}</span>
+            <span className="truncate max-w-35 sm:max-w-none">{studentName || "Add student name"}</span>
             <Pencil size={12} className="text-ink-faint group-hover:text-ink-soft shrink-0" />
           </button>
         )}

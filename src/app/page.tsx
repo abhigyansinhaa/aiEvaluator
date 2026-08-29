@@ -182,7 +182,7 @@ export default function Home() {
     <AppShell sidebarExpanded={!showWorkspace && !isProcessing} onBack={reset}>
       {!showWorkspace && !isProcessing && (
         <div className="flex-1 overflow-auto flex items-center justify-center px-3 py-6 sm:px-6 sm:py-10 relative bg-[linear-gradient(180deg,#FFFFFF_0%,#FFFFFF_18%,#EFF2F6_50%,#D1D6DF_100%)]">
-          <div className="w-full max-w-[680px] text-center py-2 sm:py-4">
+          <div className="w-full max-w-170 text-center py-2 sm:py-4">
             <h1 className="text-2xl sm:text-3xl md:text-[40px] md:leading-tight font-bold font-display tracking-tight text-ink">
               Upload{" "}
               <span className="bg-orange-soft text-orange px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg text-2xl sm:text-3xl md:text-[40px]">

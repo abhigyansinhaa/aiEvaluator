@@ -91,7 +91,7 @@ function NavList({ expanded, onNavigate }: { expanded: boolean; onNavigate?: () 
           title={expanded ? undefined : label}
         >
           {active && (
-            <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full bg-ink ${
+            <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.75 rounded-r-full bg-ink ${
               expanded ? "h-6" : "h-5"
             }`} />
           )}
@@ -147,7 +147,7 @@ export function AppShell({ sidebarExpanded, onBack, children }: AppShellProps) {
       {mobileNavOpen && (
         <div className="sm:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-ink/40" onClick={() => setMobileNavOpen(false)} />
-          <div className="relative w-[78%] max-w-[280px] bg-surface flex flex-col h-full shadow-xl rounded-r-2xl">
+          <div className="relative w-[78%] max-w-70 bg-surface flex flex-col h-full shadow-xl rounded-r-2xl">
             <div className="flex items-center justify-between px-4 py-4 border-b border-line">
               <div className="flex items-center gap-2">
                 <BrandMark />
