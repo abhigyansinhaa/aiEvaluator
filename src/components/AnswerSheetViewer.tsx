@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { formatQuestionBadge } from "@/lib/mapping";
 import type { ExtractedAnswerBlock, PageImage } from "@/lib/types";
 
 interface AnswerSheetViewerProps {
@@ -182,7 +183,7 @@ export function AnswerSheetViewer({
                       >
                         {isHighlighted && (
                           <span className="absolute -top-3.5 left-0 bg-[#238b45] text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm whitespace-nowrap z-10">
-                            {highlightedLabel || (block.matchedNumber ? `Q${block.matchedNumber}` : "Answer")}
+                            {highlightedLabel || (block.matchedNumber ? formatQuestionBadge(block.matchedNumber) : "Answer")}
                           </span>
                         )}
                       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { UploadZone } from "@/components/UploadZone";
@@ -8,7 +8,7 @@ import { QuestionList } from "@/components/QuestionList";
 import { AnswerSheetViewer } from "@/components/AnswerSheetViewer";
 import { GradingSummary } from "@/components/GradingSummary";
 import { filesToPageImages } from "@/lib/pdf";
-import { mapAnswersToQuestions, normalizeNumber } from "@/lib/mapping";
+import { formatQuestionBadge, mapAnswersToQuestions, normalizeNumber } from "@/lib/mapping";
 import type {
   ExtractedAnswerBlock,
   ExtractedQuestion,
@@ -46,6 +46,51 @@ export default function Home() {
 
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(null);
   const [mobileTab, setMobileTab] = useState<"questions" | "sheet">("questions");
+
+  // Draggable split pane slider state (percentage of left panel)
+  const [splitPercent, setSplitPercent] = useState<number>(44);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const workspaceContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    function handleMouseMove(e: MouseEvent) {
+      if (!workspaceContainerRef.current) return;
+      const rect = workspaceContainerRef.current.getBoundingClientRect();
+      const rawPercent = ((e.clientX - rect.left) / rect.width) * 100;
+      const clamped = Math.min(75, Math.max(25, rawPercent));
+      setSplitPercent(clamped);
+    }
+
+    function handleMouseUp() {
+      setIsDragging(false);
+    }
+
+    function handleTouchMove(e: TouchEvent) {
+      if (!workspaceContainerRef.current || e.touches.length === 0) return;
+      const rect = workspaceContainerRef.current.getBoundingClientRect();
+      const rawPercent = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
+      const clamped = Math.min(75, Math.max(25, rawPercent));
+      setSplitPercent(clamped);
+    }
+
+    function handleTouchEnd() {
+      setIsDragging(false);
+    }
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("touchmove", handleTouchMove);
+    window.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [isDragging]);
 
   const answersById = useMemo(() => new Map(answers.map((a) => [a.id, a])), [answers]);
   const mappingById = useMemo(() => new Map(mappings.map((m) => [m.questionId, m])), [mappings]);
@@ -310,10 +355,16 @@ export default function Home() {
             totalQuestions={questions.length}
           />
 
-          <div className="flex-1 flex min-h-0 overflow-hidden">
+          <div
+            ref={workspaceContainerRef}
+            className={`flex-1 flex min-h-0 overflow-hidden relative ${isDragging ? "select-none cursor-col-resize" : ""}`}
+          >
+            {/* Extracted questions column */}
             <section
-              className={`w-full sm:w-[44%] border-r border-line flex-col overflow-hidden ${mobileTab === "questions" ? "flex" : "hidden sm:flex"
-                }`}
+              style={{ width: `${splitPercent}%` }}
+              className={`w-full sm:w-auto border-r border-line flex-col overflow-hidden ${
+                mobileTab === "questions" ? "flex" : "hidden sm:flex"
+              }`}
             >
               <div className="px-3 sm:px-5 py-3 border-b border-line bg-surface flex items-center justify-between shrink-0 gap-2">
                 <p className="text-xs sm:text-sm font-bold text-ink truncate">Extracted Questions (from question paper)</p>
@@ -355,15 +406,35 @@ export default function Home() {
               </div>
             </section>
 
+            {/* Draggable slider divider handle (visible on tablet/desktop) */}
+            <div
+              onMouseDown={() => setIsDragging(true)}
+              onTouchStart={() => setIsDragging(true)}
+              onDoubleClick={() => setSplitPercent(44)}
+              title="Drag to resize panels • Double-click to reset (44%)"
+              className={`hidden sm:flex w-3 -mx-1.5 z-20 items-center justify-center cursor-col-resize group shrink-0 transition-colors ${
+                isDragging ? "bg-orange/20" : "hover:bg-orange/15"
+              }`}
+            >
+              <div
+                className={`w-1 h-9 rounded-full transition-all ${
+                  isDragging
+                    ? "bg-orange w-1.5 h-12 shadow-sm"
+                    : "bg-line group-hover:bg-orange group-hover:w-1.5 group-hover:h-11"
+                }`}
+              />
+            </div>
+
+            {/* Answer sheet viewer column */}
             <section
-              className={`flex-1 flex-col overflow-hidden ${mobileTab === "sheet" ? "flex" : "hidden sm:flex"}`}
+              className={`flex-1 flex-col overflow-hidden min-w-0 ${mobileTab === "sheet" ? "flex" : "hidden sm:flex"}`}
             >
               <div className="flex-1 overflow-hidden">
                 <AnswerSheetViewer
                   pages={answerPages}
                   answers={answers}
                   highlightedAnswerIds={highlightedAnswerIds}
-                  highlightedLabel={selectedQuestion ? `Q${selectedQuestion.number}` : null}
+                  highlightedLabel={selectedQuestion ? formatQuestionBadge(selectedQuestion.number) : null}
                   jumpToPage={jumpToPage}
                   onAnswerClick={handleAnswerClick}
                 />

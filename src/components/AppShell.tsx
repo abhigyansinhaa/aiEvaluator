@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   ArrowLeft,
@@ -8,16 +8,14 @@ import {
   ChevronDown,
   ChevronsLeft,
   ChevronsRight,
-  Copy,
+  ClipboardList,
   FileText,
-  Files,
   HelpCircle,
   LayoutGrid,
-  Library,
   Menu,
+  PieChart,
   Presentation,
   School,
-  Settings,
   Sparkles,
   X,
 } from "lucide-react";
@@ -31,9 +29,9 @@ interface AppShellProps {
 const NAV_ITEMS = [
   { icon: LayoutGrid, label: "Home" },
   { icon: Presentation, label: "My Classroom" },
-  { icon: Files, label: "Assignments" },
-  { icon: FileText, label: "Exams", active: true },
-  { icon: Library, label: "My Library" },
+  { icon: FileText, label: "Assignments" },
+  { icon: ClipboardList, label: "Exams", active: true },
+  { icon: PieChart, label: "My Library" },
 ];
 
 function BrandMark({ className = "w-8 h-8" }: { className?: string }) {
@@ -67,13 +65,13 @@ function ToolkitPill({ compact }: { compact: boolean }) {
 
 function SchoolBadge({ compact }: { compact: boolean }) {
   return (
-    <div className={`flex items-center gap-2.5 rounded-xl border border-line bg-surface-muted transition-all ${compact ? "p-1.5 justify-center" : "px-3 py-2.5"}`}>
-      <div className="w-8 h-8 rounded-md bg-green-soft border border-green-border flex items-center justify-center shrink-0">
+    <div className={`flex items-center gap-3 rounded-2xl border border-line/40 bg-surface-muted transition-all w-full ${compact ? "p-1.5 justify-center" : "p-3"}`}>
+      <div className="w-8 h-8 rounded-lg bg-green-soft border border-green-border flex items-center justify-center shrink-0">
         <School size={16} className="text-green" />
       </div>
       {!compact && (
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-ink truncate">Delhi Public School</p>
+          <p className="text-xs font-bold text-ink truncate">Delhi Public School</p>
           <p className="text-[11px] text-ink-faint truncate">Bokaro Steel City</p>
         </div>
       )}
@@ -83,39 +81,20 @@ function SchoolBadge({ compact }: { compact: boolean }) {
 
 function NavList({ expanded, onNavigate }: { expanded: boolean; onNavigate?: () => void }) {
   return (
-    <nav className="flex-1 px-2.5 space-y-0.5">
+    <nav className="flex-1 px-3 space-y-1">
       {NAV_ITEMS.map(({ icon: Icon, label, active }) => (
         <button
           key={label}
           onClick={onNavigate}
-          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left relative transition-colors ${
-            active ? "text-ink font-semibold" : "text-ink-soft hover:text-ink hover:bg-surface-muted"
+          className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left transition-colors ${
+            active ? "bg-surface-muted text-ink font-bold shadow-2xs" : "text-ink-soft hover:text-ink hover:bg-surface-muted/60 font-medium"
           } ${expanded ? "" : "justify-center px-0"}`}
           title={expanded ? undefined : label}
         >
-          {active && (
-            <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-0.75 rounded-r-full bg-ink ${
-              expanded ? "h-6" : "h-5"
-            }`} />
-          )}
-          <Icon size={18} className="shrink-0" />
+          <Icon size={18} className="shrink-0 text-ink-soft" />
           {expanded && <span>{label}</span>}
         </button>
       ))}
-
-      {/* Settings item with separator */}
-      <div className="pt-2 mt-2 border-t border-line">
-        <button
-          onClick={onNavigate}
-          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-left text-ink-soft hover:text-ink hover:bg-surface-muted ${
-            expanded ? "" : "justify-center px-0"
-          }`}
-          title={expanded ? undefined : "Settings"}
-        >
-          <Settings size={18} className="shrink-0" />
-          {expanded && <span>Settings</span>}
-        </button>
-      </div>
     </nav>
   );
 }
@@ -123,6 +102,11 @@ function NavList({ expanded, onNavigate }: { expanded: boolean; onNavigate?: () 
 export function AppShell({ sidebarExpanded = false, onBack, children }: AppShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(sidebarExpanded);
+
+  // Automatically update expansion state when parent changes mode (e.g. idle -> extracting -> workspace)
+  useEffect(() => {
+    setIsExpanded(sidebarExpanded);
+  }, [sidebarExpanded]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-bg">
@@ -187,10 +171,14 @@ export function AppShell({ sidebarExpanded = false, onBack, children }: AppShell
             {isExpanded && (
               <button
                 onClick={() => setIsExpanded(false)}
-                className="text-ink-soft hover:text-ink transition-colors"
+                className="text-ink-soft hover:text-ink transition-colors p-1 rounded-md hover:bg-surface-muted"
                 aria-label="Collapse sidebar"
+                title="Collapse sidebar"
               >
-                <Copy size={16} />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="3" />
+                  <path d="M16 3v18" />
+                </svg>
               </button>
             )}
           </div>

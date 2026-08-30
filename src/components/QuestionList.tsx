@@ -12,9 +12,10 @@ interface QuestionListProps {
 }
 
 function splitNumber(raw: string): { main: string; sub: string | null } {
-  const match = raw.trim().match(/^(\d+)\s*\(?\s*([a-zA-Z]+)\)?\s*$/);
+  const cleaned = raw.trim().replace(/^(?:ans\.?w?e?r?\.?|sol\.?|question\s*(?:no\.?)?|q+)\s*/i, "").replace(/[.:]+$/, "").trim();
+  const match = cleaned.match(/^(\d+)\s*\(?\s*([a-zA-Z]+)\)?\s*$/);
   if (match) return { main: match[1], sub: `${match[2].toLowerCase()}.` };
-  return { main: raw, sub: null };
+  return { main: cleaned || raw, sub: null };
 }
 
 function statusLabel(mapping: QuestionMapping | undefined): string {

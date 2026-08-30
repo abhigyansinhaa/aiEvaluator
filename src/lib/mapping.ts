@@ -12,6 +12,15 @@ export function normalizeNumber(raw: string | null | undefined): string {
     .trim();
 }
 
+/** Formats a question number cleanly for display on badges, e.g. "8", "Q8.", "QQ8." -> "Q8." or "Q8". */
+export function formatQuestionBadge(raw: string | null | undefined): string {
+  if (!raw) return "";
+  const cleaned = raw.trim();
+  // Strip any existing Q/Ans/Question prefixes (including repeated Q's)
+  const stripped = cleaned.replace(/^(?:ans\.?w?e?r?\.?|sol\.?|question\s*(?:no\.?)?|q+)\s*/i, "").trim();
+  return stripped ? `Q${stripped}` : cleaned;
+}
+
 /** Formats a question number cleanly for display on badges, e.g. "8" or "Q8." -> "Q No. 8". */
 export function formatQuestionLabel(raw: string | null | undefined): string {
   if (!raw) return "";
