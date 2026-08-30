@@ -189,15 +189,18 @@ export function AppShell({ sidebarExpanded = false, onBack, children }: AppShell
 
           <NavList expanded={isExpanded} />
 
-          <div className={`px-2.5 pb-2 flex flex-col items-center gap-2`}>
+          <div className="px-2.5 pb-3 flex flex-col items-center gap-2">
             <SchoolBadge compact={!isExpanded} />
-            <button
-              onClick={() => setIsExpanded((v) => !v)}
-              aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
-              className="w-full py-1.5 flex items-center justify-center text-ink-soft hover:text-ink hover:bg-surface-muted rounded-lg transition-colors"
-            >
-              {isExpanded ? <ChevronsLeft size={16} /> : <ChevronsRight size={16} />}
-            </button>
+            {!isExpanded && (
+              <button
+                onClick={() => setIsExpanded(true)}
+                aria-label="Expand sidebar"
+                title="Expand sidebar"
+                className="w-full py-1.5 flex items-center justify-center text-ink-soft hover:text-ink hover:bg-surface-muted rounded-lg transition-colors"
+              >
+                <ChevronsRight size={16} />
+              </button>
+            )}
           </div>
         </aside>
 

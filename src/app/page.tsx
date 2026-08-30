@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { GripVertical, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { UploadZone } from "@/components/UploadZone";
 import { QuestionList } from "@/components/QuestionList";
@@ -406,23 +406,23 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Draggable slider divider handle (visible on tablet/desktop) */}
+            {/* Draggable slider divider handle with off-white bubble (visible on tablet/desktop) */}
             <div
               onMouseDown={() => setIsDragging(true)}
               onTouchStart={() => setIsDragging(true)}
               onDoubleClick={() => setSplitPercent(44)}
               title="Drag to resize panels • Double-click to reset (44%)"
-              className={`hidden sm:flex w-3 -mx-1.5 z-20 items-center justify-center cursor-col-resize group shrink-0 transition-colors ${
-                isDragging ? "bg-orange/20" : "hover:bg-orange/15"
-              }`}
+              className="hidden sm:flex relative w-0 z-20 items-center justify-center cursor-col-resize shrink-0 select-none"
             >
               <div
-                className={`w-1 h-9 rounded-full transition-all ${
+                className={`absolute w-4.5 h-12 rounded-full bg-[#fbfbfb] border border-line shadow-[0_2px_8px_rgba(0,0,0,0.08)] flex items-center justify-center transition-all ${
                   isDragging
-                    ? "bg-orange w-1.5 h-12 shadow-sm"
-                    : "bg-line group-hover:bg-orange group-hover:w-1.5 group-hover:h-11"
+                    ? "bg-white shadow-[0_4px_12px_rgba(0,0,0,0.12)] scale-110 border-ink-soft/40"
+                    : "hover:bg-white hover:scale-105 hover:shadow-[0_4px_10px_rgba(0,0,0,0.1)]"
                 }`}
-              />
+              >
+                <GripVertical size={13} className="text-ink-faint shrink-0" />
+              </div>
             </div>
 
             {/* Answer sheet viewer column */}
